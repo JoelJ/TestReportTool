@@ -1,0 +1,36 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+		 xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<l:layout>
+		<style>
+			#TestResult .FAILED {
+				color: red;
+			}
+
+			#TestResult .FINISHED {
+				color: blue;
+			}
+
+
+			#TestResult .name {
+				font-weight: bold;
+				margin-left: 2em;
+			}
+
+			#TestResult .floatPanel {
+				height: 75px;
+			}
+
+			#TestResult .floatPanel>.float {
+				float: left;
+				margin: 5px;
+			}
+		</style>
+		<j:set var="build" value="${it.findBuild()}"/>
+		<j:set var="name" value='${request.getParameter("name")}'/>
+		<j:set var="test" value="${it.testResults.get(name)}"/>
+		<st:include it="${build}" page="sidepanel.jelly" />
+		<l:main-panel>
+			<st:include it="${test}" page="index.jelly"/>
+		</l:main-panel>
+	</l:layout>
+</j:jelly>

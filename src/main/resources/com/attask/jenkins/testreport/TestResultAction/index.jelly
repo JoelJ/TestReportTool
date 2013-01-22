@@ -1,0 +1,27 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+		 xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<l:layout>
+		<style>
+			#TestResultList table {
+				max-width: 95%;
+			}
+		</style>
+		<j:set var="build" value="${it.findBuild()}"/>
+		<st:include it="${build}" page="sidepanel.jelly" />
+		<l:main-panel>
+			<div id="TestResultList">
+				<h1>Test Results<j:if test="${it.uniquifier != null and !it.uniquifier.isEmpty()}"> for '<span class="uniquifier">${it.uniquifier}</span>'</j:if></h1>
+				<table class="pane sortable">
+					<tr>
+						<td class="pane-header">Name</td>
+						<td class="pane-header">Time</td>
+						<td class="pane-header">Age</td>
+					</tr>
+					<j:forEach var="test" items="${it.failures}">
+						<st:include it="${test}" page="row.jelly" />
+					</j:forEach>
+				</table>
+			</div>
+		</l:main-panel>
+	</l:layout>
+</j:jelly>

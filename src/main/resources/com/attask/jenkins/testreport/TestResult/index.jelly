@@ -1,0 +1,23 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+		 xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<div id="TestResult">
+		<h1>Test Result -
+			<span class="status ${it.status}">${it.status}</span>
+		</h1>
+		<div class="name">${it.name}</div>
+		<div class="floatPanel">
+			<div class="time float">
+				<h3>Time</h3>
+				<span>${it.time}ms</span>
+			</div>
+			<div class="age float">
+				<h3>Age</h3>
+				<span>${it.age}</span>
+			</div>
+		</div>
+		<div class="stackTrace">
+			<h3>Stack Trace</h3>
+			<pre>${it.stackTrace == null ? "No StackTrace" : test.stackTrace}</pre>
+		</div>
+	</div>
+</j:jelly>

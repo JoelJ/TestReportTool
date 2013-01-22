@@ -1,0 +1,14 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry title="Results Files" field="resultsFilePattern">
+		<f:textbox />
+	</f:entry>
+	<!--<f:entry title="Include Downstream Results" field="includeDownstream">-->
+		<!--<f:checkbox />-->
+	<!--</f:entry>-->
+	<f:entry title="Uniquifier" field="uniquifier">
+		<f:textbox />
+	</f:entry>
+	<f:entry title="Url" field="url">
+		<f:textbox default="testReport" />
+	</f:entry>
+</j:jelly>
