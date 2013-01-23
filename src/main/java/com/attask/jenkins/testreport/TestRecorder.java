@@ -10,6 +10,7 @@ import hudson.matrix.MatrixBuild;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
+import hudson.model.Result;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
@@ -66,7 +67,13 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 		}
 
 
-		build.addAction(new TestResultAction(build, results, expandedUniquifier, expandedUrl));
+		TestResultAction resultAction = new TestResultAction(build, results, expandedUniquifier, expandedUrl);
+		build.addAction(resultAction);
+
+		if(resultAction.getFailCount() > 0) {
+			build.setResult(Result.UNSTABLE);
+		}
+
 		return true;
 	}
 
