@@ -172,7 +172,14 @@ public class TestResult implements Comparable<TestResult> {
 			throw new IllegalFailureFileFormatException(file, lineNumber, "Not whitespace separated: " + line);
 		}
 		String statusString = line.substring(0, i);
-		TestStatus status = TestStatus.valueOf(statusString.toUpperCase());
+
+		TestStatus status;
+		try {
+			status = TestStatus.valueOf(statusString.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new IllegalFailureFileFormatException(file, lineNumber, "No definition for status: " + statusString + ". Line: '" + line + "'");
+		}
+
 		String token = line.substring(i+1);
 
 		TestResult parsedResult = parseLine(file, status, lineNumber, token, scanner, build, uniqueId, url);
