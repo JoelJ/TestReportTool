@@ -1,0 +1,14 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+		 xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<table class="pane sortable passed">
+		<tr>
+			<td class="pane-header">Name</td>
+			<td class="pane-header">Time</td>
+			<td class="pane-header">Status</td>
+			<td class="pane-header">Age</td>
+		</tr>
+		<j:forEach var="test" items="${it.findAllResults()}">
+			<st:include it="${test}" page="detailedRow.jelly"/>
+		</j:forEach>
+	</table>
+</j:jelly>

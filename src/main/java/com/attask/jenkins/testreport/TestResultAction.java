@@ -5,9 +5,13 @@ import hudson.matrix.MatrixRun;
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.tasks.test.AbstractTestResultAction;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import javax.servlet.ServletOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -80,6 +84,14 @@ public class TestResultAction extends AbstractTestResultAction {
 		return Run.fromExternalizableId(buildId);
 	}
 
+	public void doGetStackTrace(StaplerRequest request, StaplerResponse response) throws IOException {
+		String name = request.getParameter("name");
+		TestResult testResult = testResults.get(name);
+		ServletOutputStream outputStream = response.getOutputStream();
+		outputStream.print(testResult.getStackTrace());
+		outputStream.flush();
+	}
+
 	@Exported
 	public String getBuildId() {
 		return buildId;
@@ -94,6 +106,14 @@ public class TestResultAction extends AbstractTestResultAction {
 	public List<TestResult> getFailures() {
 		List<TestResult> failures = testResultByStatus.get(TestStatus.FAILED);
 		return failures == null ? Collections.<TestResult>emptyList() : failures;
+	}
+
+	public Collection<TestResult> findAllResults() {
+		TreeSet<TestResult> result = new TreeSet<TestResult>();
+		for (Collection<TestResult> testResults : testResultByStatus.values()) {
+			result.addAll(testResults);
+		}
+		return result;
 	}
 
 	@Override

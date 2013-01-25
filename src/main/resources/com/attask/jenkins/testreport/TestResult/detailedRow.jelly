@@ -1,11 +1,10 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
-		 xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core">
 	<tr>
 		<td class="pane name">
-			<span href="getStackTrace?name=${it.nameUrlEncoded}" class="showStackTrace">&gt;&gt;&gt;</span>
 			<a href="test?name=${it.nameUrlEncoded}">${test.name}</a>
 		</td>
 		<td class="pane time" width="4em">${it.time}ms</td>
+		<td class="pane status" width="4em">${it.status}</td>
 		<td class="pane age" width="4em">
 			<a href="${rootURL}/${it.findFirstFailureUrl()}${it.url}">${it.age}</a>
 		</td>
