@@ -5,7 +5,7 @@
 			<span href="getStackTrace?name=${it.nameUrlEncoded}" class="showStackTrace">&gt;&gt;&gt;</span>
 			<a href="test?name=${it.nameUrlEncoded}">${test.name}</a>
 		</td>
-		<td class="pane time" width="4em">${it.time}ms</td>
+		<td class="pane time" data="{it.time}" width="4em">${it.time}ms</td>
 		<td class="pane age" width="4em">
 			<a href="${rootURL}/${it.findFirstFailureUrl()}${it.url}">${it.age}</a>
 		</td>
