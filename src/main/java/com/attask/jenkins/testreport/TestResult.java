@@ -9,7 +9,6 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -136,73 +135,88 @@ public class TestResult implements Comparable<TestResult> {
 	public static Collection<TestResult> parse(FilePath file, AbstractBuild build, String uniqueId, String url) throws IOException, IllegalFormatException {
 		Map<TestResult, TestStatus> results = new HashMap<TestResult, TestStatus>();
 
-		InputStream fileStream = file.read();
-		try {
-			Scanner scanner = new Scanner(fileStream);
-			try {
-				if(scanner.hasNextLine()) {
-					String header = scanner.nextLine();
-					if(!"AtTask Failures v2".equals(header)) {
-						throw new IllegalFailureFileFormatException(file, 1, "Illegal Header: `" + header + "`");
-					}
+		List<String> fileLines = Arrays.asList(file.readToString().split("\n"));
+		for (int lineNumber = 0; lineNumber < fileLines.size(); lineNumber++) {
+			String line = fileLines.get(lineNumber);
+			if(lineNumber == 0) {
+				if(!line.equals("AtTask Failures v2")) {
+					throw new IllegalFailureFileFormatException(file, lineNumber, "Unsupported file version: " + line);
 				}
-				int lineNumber = 0;
-				while(scanner.hasNextLine()) {
-					lineNumber++; //increment first since we already read the header.
-					String line = scanner.nextLine();
-					parseLine(file, build, uniqueId, results, scanner, lineNumber, line, url);
-				}
-			} finally {
-				scanner.close();
+				continue;
 			}
-		} finally {
-			fileStream.close();
+
+			int firstWhitespaceIndex = line.indexOf(" ");
+			if(firstWhitespaceIndex < 0) {
+				continue;
+			}
+
+			String statusString = line.substring(0, firstWhitespaceIndex);
+			String token = line.substring(firstWhitespaceIndex+1);
+
+			TestStatus testStatus;
+			try {
+				testStatus = TestStatus.valueOf(statusString.toUpperCase());
+			} catch(IllegalArgumentException e) {
+				throw new IllegalFailureFileFormatException(file, lineNumber, "Line status token invalid. '" + statusString + "'");
+			}
+
+			TestResult result;
+			switch (testStatus) {
+				case ADDED:
+				case STARTED:
+					result = parseSimple(testStatus, token, build, url);
+					break;
+				case FINISHED:
+				case SKIPPED:
+					result = parseSimplePlusMetadata(file, lineNumber, testStatus, token, build, url);
+					break;
+				case FAILED:
+					String[] tokenizedLine = token.split("\\s");
+					String name = tokenizedLine[0];
+					String threadId;
+					if (tokenizedLine.length > 1) {
+						threadId = tokenizedLine[1];
+					} else {
+						throw new IllegalFailureFileFormatException(file, lineNumber, "Missing Thread ID");
+					}
+					int runTime;
+					if (tokenizedLine.length > 2) {
+						runTime = Integer.parseInt(tokenizedLine[2]);
+					} else {
+						throw new IllegalFailureFileFormatException(file, lineNumber, "Missing Runtime");
+					}
+					AgeStat ageStat = findAge(name, build, uniqueId);
+					StringBuilder stackTrace = new StringBuilder();
+					int linesToAdvance = readStackTrace(fileLines, lineNumber, stackTrace);
+					lineNumber += linesToAdvance;
+
+					result = new TestResult(name, runTime, threadId, testStatus, getRealExternalizableId(build), stackTrace.toString(), ageStat.age, ageStat.firstFailingBuild, url);
+					break;
+				default:
+					throw new IllegalFailureFileFormatException(file, lineNumber, "Status not implemented: " + testStatus);
+			}
+
+			TestStatus oldStatus = results.get(result);
+			if(oldStatus == null || result.getStatus().isMoreInterestingThan(oldStatus)) {
+				results.remove(result);
+				results.put(result, result.getStatus());
+			}
 		}
 
 		return results.keySet();
 	}
 
-	private static void parseLine(FilePath file, AbstractBuild build, String uniqueId, Map<TestResult, TestStatus> results, Scanner scanner, int lineNumber, String line, String url) {
-		if(line == null || line.trim().isEmpty()) {
-			return;
+	private static int readStackTrace(List<String> file, int currentPosition, StringBuilder sb) {
+		int count = 0;
+		for(int i = currentPosition+1; i < file.size(); i++) {
+			String line = file.get(i);
+			if(checkIsTestLine(line)) {
+				break;
+			}
+			count++;
+			sb.append(line).append("\n");
 		}
-
-		int i = line.indexOf(" ");
-		if(i < 0) {
-			throw new IllegalFailureFileFormatException(file, lineNumber, "Not whitespace separated: " + line);
-		}
-		String statusString = line.substring(0, i);
-
-		TestStatus status;
-		try {
-			status = TestStatus.valueOf(statusString.toUpperCase());
-		} catch (IllegalArgumentException e) {
-			throw new IllegalFailureFileFormatException(file, lineNumber, "No definition for status: " + statusString + ". Line: '" + line + "'");
-		}
-
-		String token = line.substring(i+1);
-
-		TestResult parsedResult = parseLine(file, status, lineNumber, token, scanner, build, uniqueId, url);
-		TestStatus oldStatus = results.get(parsedResult);
-		if(oldStatus == null || parsedResult.getStatus().isMoreInterestingThan(oldStatus)) {
-			results.remove(parsedResult);
-			results.put(parsedResult, parsedResult.getStatus());
-		}
-	}
-
-	private static TestResult parseLine(FilePath file, TestStatus status, int lineNumber, String token, Scanner scanner, AbstractBuild build, String uniqueId, String url) {
-		switch (status) {
-			case ADDED:
-			case STARTED:
-				return parseSimple(status, token, build, url);
-			case FINISHED:
-			case SKIPPED:
-				return parseSimplePlusMetadata(file, lineNumber, status, token, build, url);
-			case FAILED:
-				return parseFailure(file, status, lineNumber, token, scanner, build, uniqueId, url);
-			default:
-				throw new IllegalFailureFileFormatException(file, lineNumber, "Unsupported Test Status: " + status);
-		}
+		return count;
 	}
 
 	private static TestResult parseSimple(TestStatus status, String token, AbstractBuild build, String url) {
@@ -225,27 +239,6 @@ public class TestResult implements Comparable<TestResult> {
 			throw new IllegalFailureFileFormatException(file, lineNumber, "Missing Runtime");
 		}
 		return new TestResult(name, runTime, threadId, status, getRealExternalizableId(build), null, 0, null, url);
-	}
-
-	private static TestResult parseFailure(FilePath file, TestStatus status, int lineNumber, String token, Scanner scanner, AbstractBuild build, String uniqueId, String url) {
-		String[] split = token.split("\\s");
-		String name = split[0];
-		String threadId;
-		if (split.length > 1) {
-			threadId = split[1];
-		} else {
-			throw new IllegalFailureFileFormatException(file, lineNumber, "Missing Thread ID");
-		}
-		int runTime;
-		if (split.length > 2) {
-			runTime = Integer.parseInt(split[2]);
-		} else {
-			throw new IllegalFailureFileFormatException(file, lineNumber, "Missing Runtime");
-		}
-
-		String stackTrace = readStackTrace(scanner);
-		AgeStat ageStat = findAge(name, build, uniqueId);
-		return new TestResult(name, runTime, threadId, status, getRealExternalizableId(build), stackTrace, ageStat.age, ageStat.firstFailingBuild, url);
 	}
 
 	static String getRealExternalizableId(Run build) {
@@ -294,14 +287,13 @@ public class TestResult implements Comparable<TestResult> {
 		return ageStat;
 	}
 
-	private static String readStackTrace(Scanner scanner) {
-		String line = scanner.nextLine();
-		StringBuilder sb = new StringBuilder();
-		while(!line.isEmpty()) {
-			sb.append(line).append("\n");
-			line = scanner.nextLine().trim();
+	private static boolean checkIsTestLine(String line) {
+		for (TestStatus testStatus : TestStatus.values()) {
+			if(line.startsWith(testStatus.toString().toLowerCase() + " ")) {
+				return true;
+			}
 		}
-		return sb.toString().trim();
+		return false;
 	}
 
 	@Override
