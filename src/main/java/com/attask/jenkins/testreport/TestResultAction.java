@@ -144,8 +144,8 @@ public class TestResultAction extends AbstractTestResultAction {
 			return null;
 		}
 
-		Run previousBuild;
-		while((previousBuild = build.getPreviousBuild()) != null) {
+		Run previousBuild = build;
+		while((previousBuild = previousBuild.getPreviousBuild()) != null) {
 			TestResultAction action = previousBuild.getAction(TestResultAction.class);
 			if(action != null) {
 				return action;
