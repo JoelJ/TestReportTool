@@ -94,7 +94,7 @@ public class TestResult implements Comparable<TestResult> {
 	public String findFirstFailureUrl() {
 		String firstFailingBuildId = getFirstFailingBuildId();
 		if(firstFailingBuildId != null) {
-			if(firstFailingBuildId .contains("$$slice=")) {
+			if(firstFailingBuildId.contains("$$")) {
 				String matrixBuild = findMatrixBuildUrl(firstFailingBuildId);
 				if(matrixBuild != null) {
 					return matrixBuild;
