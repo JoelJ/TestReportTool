@@ -11,6 +11,6 @@ import java.io.File;
  */
 public class IllegalFailureFileFormatException extends RuntimeException {
 	public IllegalFailureFileFormatException(FilePath file, int lineNumber, String message) {
-		super(file.getRemote() + " is not a valid Failures File. Line: " + lineNumber +" . " + message);
+		super(file.getRemote() + " is not a valid Failures File. Line: " + (lineNumber+1) +" . " + message);
 	}
 }
