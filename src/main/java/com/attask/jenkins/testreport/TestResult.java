@@ -137,7 +137,7 @@ public class TestResult implements Comparable<TestResult> {
 
 		List<String> fileLines = Arrays.asList(file.readToString().split("\n"));
 		for (int lineNumber = 0; lineNumber < fileLines.size(); lineNumber++) {
-			String line = fileLines.get(lineNumber);
+			String line = fileLines.get(lineNumber).trim();
 			if(lineNumber == 0) {
 				if(!line.equals("AtTask Failures v2")) {
 					throw new IllegalFailureFileFormatException(file, lineNumber, "Unsupported file version: " + line);
