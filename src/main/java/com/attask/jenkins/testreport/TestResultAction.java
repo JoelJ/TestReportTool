@@ -28,7 +28,7 @@ public class TestResultAction extends AbstractTestResultAction {
 	private final String uniquifier;
 	private final String urlName;
 
-	public TestResultAction(AbstractBuild<?, ?> build, List<TestResult> testResults, String uniquifier, String url) {
+	public TestResultAction(AbstractBuild<?, ?> build, Collection<TestResult> testResults, String uniquifier, String url) {
 		super(build);
 		if(build == null) {
 			throw new NullPointerException("build");

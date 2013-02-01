@@ -7,8 +7,7 @@ import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * User: Joel Johnson
@@ -24,7 +23,7 @@ public class TestResultMatrixAggregator extends MatrixAggregator {
 	public boolean endBuild() throws InterruptedException, IOException {
 		List<MatrixRun> runs = build.getRuns();
 		if(runs != null && runs.size() > 0) {
-			List<TestResult> testResults = new ArrayList<TestResult>();
+			Set<TestResult> testResults = new HashSet<TestResult>();
 			String uniquifier = null;
 			String url = "testReport";
 			for (MatrixRun run : runs) {

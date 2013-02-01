@@ -30,7 +30,7 @@
 		<st:include it="${build}" page="sidepanel.jelly" />
 		<l:main-panel>
 			<div id="TestResultList">
-				<h1>Failing Tests<j:if test="${it.uniquifier != null and !it.uniquifier.isEmpty()}"> for '<span class="uniquifier">${it.uniquifier}</span>'</j:if></h1>
+				<h1>${it.failures.size()} Failing Tests<j:if test="${it.uniquifier != null and !it.uniquifier.isEmpty()}"> for '<span class="uniquifier">${it.uniquifier}</span>'</j:if></h1>
 				<table class="pane sortable failed">
 					<tr>
 						<td class="pane-header">Name</td>
