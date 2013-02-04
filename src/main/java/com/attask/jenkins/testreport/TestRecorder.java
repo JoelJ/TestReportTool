@@ -7,25 +7,26 @@ import hudson.Launcher;
 import hudson.matrix.MatrixAggregatable;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.Result;
+import hudson.model.*;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
-import hudson.tasks.junit.CaseResult;
+import hudson.util.DescribableList;
+import net.sf.json.JSONObject;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * User: Joel Johnson
@@ -37,12 +38,15 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 	private final String resultsFilePattern;
 	private final String uniquifier;
 	private final String url;
+	private final DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers;
 
 	@DataBoundConstructor
-	public TestRecorder(String resultsFilePattern, String uniquifier, String url) {
+	public TestRecorder(String resultsFilePattern, String uniquifier, String url, DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers) {
+		//This constructor isn't automatically bound. It's manually bound in the DescriptorImpl class
 		this.resultsFilePattern = resultsFilePattern;
 		this.uniquifier = uniquifier;
 		this.url = url;
+		this.testDataPublishers = testDataPublishers;
 	}
 
 	@Override
@@ -66,14 +70,18 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 			results.addAll(testResults);
 		}
 
+		List<TestDataPublisher> testDataPublisherList = new ArrayList<TestDataPublisher>(testDataPublishers.size());
+		for (TestDataPublisher testDataPublisher : testDataPublishers) {
+			testDataPublisherList.add(testDataPublisher);
+		}
 
-		TestResultAction resultAction = new TestResultAction(build, results, expandedUniquifier, expandedUrl);
-		build.addAction(resultAction);
+		TestResultAction resultAction = new TestResultAction(build, results, expandedUniquifier, expandedUrl, testDataPublisherList);
 
 		if(resultAction.getFailCount() > 0) {
 			build.setResult(Result.UNSTABLE);
 		}
 
+		build.addAction(resultAction);
 		return true;
 	}
 
@@ -82,7 +90,11 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 	 */
 	@Override
 	public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
-		return new TestResultMatrixAggregator(build, launcher, listener);
+		List<TestDataPublisher> testDataPublisherList = new ArrayList<TestDataPublisher>(testDataPublishers.size());
+		for (TestDataPublisher testDataPublisher : testDataPublishers) {
+			testDataPublisherList.add(testDataPublisher);
+		}
+		return new TestResultMatrixAggregator(build, launcher, listener, testDataPublisherList);
 	}
 
 	private String[] findResultsArtifacts(AbstractBuild<?, ?> build, Launcher launcher, String resultsFilePattern) throws IOException, InterruptedException {
@@ -104,6 +116,11 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 		return url;
 	}
 
+	@Exported
+	public DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> getTestDataPublishers() {
+		return testDataPublishers;
+	}
+
 	@Extension
 	public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 		@Override
@@ -115,6 +132,23 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 		public String getDisplayName() {
 			return "Publish AtTask Test Results";
 		}
+
+		@Override
+		public Publisher newInstance(StaplerRequest req, JSONObject formData) throws hudson.model.Descriptor.FormException {
+			String resultsFilePattern = formData.getString("resultsFilePattern");
+			String uniquifier = formData.getString("uniquifier");
+			String url = formData.getString("url");
+
+			DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers = new DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>>(Saveable.NOOP);
+			try {
+				testDataPublishers.rebuild(req, formData, TestDataPublisher.all());
+			} catch (IOException e) {
+				throw new FormException(e,null);
+			}
+
+			return new TestRecorder(resultsFilePattern, uniquifier, url, testDataPublishers);
+		}
+
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {

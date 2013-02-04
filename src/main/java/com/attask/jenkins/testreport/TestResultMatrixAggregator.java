@@ -15,8 +15,11 @@ import java.util.*;
  * Time: 7:26 PM
  */
 public class TestResultMatrixAggregator extends MatrixAggregator {
-	protected TestResultMatrixAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
+	private final List<TestDataPublisher> testDataPublishers;
+
+	protected TestResultMatrixAggregator(MatrixBuild build, Launcher launcher, BuildListener listener, List<TestDataPublisher> testDataPublishers) {
 		super(build, launcher, listener);
+		this.testDataPublishers = testDataPublishers;
 	}
 
 	@Override
@@ -36,7 +39,7 @@ public class TestResultMatrixAggregator extends MatrixAggregator {
 				}
 			}
 			if(uniquifier != null) {
-				build.addAction(new TestResultAction(build, testResults, uniquifier, url));
+				build.addAction(new TestResultAction(build, testResults, uniquifier, url, testDataPublishers));
 			}
 		}
 

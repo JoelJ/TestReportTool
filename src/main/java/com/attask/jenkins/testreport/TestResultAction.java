@@ -28,7 +28,9 @@ public class TestResultAction extends AbstractTestResultAction {
 	private final String uniquifier;
 	private final String urlName;
 
-	public TestResultAction(AbstractBuild<?, ?> build, Collection<TestResult> testResults, String uniquifier, String url) {
+	private List<TestDataPublisher> testDataPublishers;
+
+	public TestResultAction(AbstractBuild<?, ?> build, Collection<TestResult> testResults, String uniquifier, String url, List<TestDataPublisher> testDataPublishers) {
 		super(build);
 		if(build == null) {
 			throw new NullPointerException("build");
@@ -58,6 +60,7 @@ public class TestResultAction extends AbstractTestResultAction {
 		}
 		this.uniquifier = uniquifier;
 		this.urlName = url;
+		this.testDataPublishers = testDataPublishers;
 	}
 
 	@SuppressWarnings("UnusedDeclaration") //used in index.jelly
@@ -135,6 +138,11 @@ public class TestResultAction extends AbstractTestResultAction {
 	public int getSkipCount() {
 		List<TestResult> skipped = testResultByStatus.get(TestStatus.SKIPPED);
 		return skipped == null ? 0 :skipped.size();
+	}
+
+	@Exported
+	public List<TestDataPublisher> getTestDataPublishers() {
+		return testDataPublishers;
 	}
 
 	@Override

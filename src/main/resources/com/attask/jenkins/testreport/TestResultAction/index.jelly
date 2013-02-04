@@ -27,15 +27,36 @@
 		</script>
 
 		<j:set var="build" value="${it.findBuild()}"/>
+		<j:set var="publishers" value="${it.testDataPublishers}"/>
 		<st:include it="${build}" page="sidepanel.jelly" />
 		<l:main-panel>
 			<div id="TestResultList">
 				<h1>${it.failures.size()} Failing Tests<j:if test="${it.uniquifier != null and !it.uniquifier.isEmpty()}"> for '<span class="uniquifier">${it.uniquifier}</span>'</j:if></h1>
+				<j:if test="${publishers != null and publishers.size() > 0}">
+					<div class="before">
+						<j:forEach var="publisher" items="${publishers}">
+							<j:if test="${publisher.before(build, testResults.values())}">
+								<st:include it="${publisher}" page="before.jelly" />
+							</j:if>
+						</j:forEach>
+					</div>
+				</j:if>
+
 				<table class="pane sortable failed">
 					<tr>
 						<td class="pane-header">Name</td>
-						<td class="pane-header">Time</td>
-						<td class="pane-header">Age</td>
+
+						<!--Extensions-->
+						<j:if test="${publishers != null and publishers.size() > 0}">
+							<j:forEach var="publisher" items="${publishers}">
+								<td class="pane-header ${publisher.displayName}" width="${publisher.width}">
+									${publisher.displayName}
+								</td>
+							</j:forEach>
+						</j:if>
+
+						<td class="pane-header" width="4em">Time</td>
+						<td class="pane-header" width="4em">Age</td>
 					</tr>
 					<j:forEach var="test" items="${it.failures}">
 						<st:include it="${test}" page="row.jelly" />
@@ -46,6 +67,16 @@
 				<div class="allResults">
 					<a href="javascript:" class="showAll">Show All Results</a>
 				</div>
+
+				<j:if test="${publishers != null and publishers.size() > 0}">
+					<div class="after">
+						<j:forEach var="publisher" items="${publishers}">
+							<j:if test="${publisher.after(build, testResults.values())}">
+								<st:include it="${publisher}" page="after.jelly" />
+							</j:if>
+						</j:forEach>
+					</div>
+				</j:if>
 			</div>
 		</l:main-panel>
 	</l:layout>
