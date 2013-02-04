@@ -1,0 +1,7 @@
+<div>
+	Pattern to match against the file names of the artifacts.<br/>
+	The variable ${TEST_NAME} will be expanded to be the name of the test when evaluating the regular expression.
+	(It is automatically wrapped in \Q..\E for taking the test name verbatim.)<br/>
+	For example, the following pattern will match a png file that has the test's name anywhere in the filename:
+	<code>.*${TEST_NAME}.*\.png</code>
+</div>
