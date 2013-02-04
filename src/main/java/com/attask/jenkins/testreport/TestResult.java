@@ -10,6 +10,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * User: Joel Johnson
@@ -18,6 +19,7 @@ import java.util.*;
  */
 @ExportedBean
 public class TestResult implements Comparable<TestResult> {
+	public static final Logger log = Logger.getLogger("TestReportTool");
 	private final String name;
 	private final int time;
 	private final String threadId;
@@ -109,6 +111,9 @@ public class TestResult implements Comparable<TestResult> {
 	}
 
 	private String findMatrixBuildUrl(String matrixId) {
+		if(matrixId == null) {
+			return null;
+		}
 		String[] ids = matrixId.split("\\$\\$", 2);
 		if(ids.length != 2) {
 			return null;
@@ -116,6 +121,12 @@ public class TestResult implements Comparable<TestResult> {
 
 		String parentMatrixId = ids[0];
 		String childMatrixId = ids[1];
+
+		if(parentMatrixId == null || childMatrixId == null) {
+			//There were NPE showing up in the log from parentMatrixId being null. Adding this to get more visibility.
+			log.severe("String.split returned null in the array. How is that possible? original string:`" + matrixId + "` split[0]: `" + parentMatrixId + "` split[1]: `" + childMatrixId + "`");
+			return null;
+		}
 
 		Run<?, ?> run = Run.fromExternalizableId(parentMatrixId);
 		if(run != null) {
