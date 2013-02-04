@@ -28,6 +28,7 @@
 		<j:set var="build" value="${it.findBuild()}"/>
 		<j:set var="name" value='${request.getParameter("name")}'/>
 		<j:set var="test" value="${it.testResults.get(name)}"/>
+		<j:set var="publishers" value="${it.testDataPublishers}"/>
 		<st:include it="${build}" page="sidepanel.jelly" />
 		<l:main-panel>
 			<st:include it="${test}" page="index.jelly"/>

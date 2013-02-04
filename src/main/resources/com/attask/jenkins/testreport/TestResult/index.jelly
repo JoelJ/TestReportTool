@@ -14,10 +14,32 @@
 				<h3>Age</h3>
 				<span>${it.age}</span>
 			</div>
+			<j:if test="${publishers != null}">
+				<j:set var="test" value="${it}"/>
+				<j:forEach var="publisher" items="${publishers}">
+					<div class="float ${publisher.displayName}">
+						<h3>${publisher.displayName}</h3>
+						<span>
+							<st:include it="${publisher}" page="float.jelly" />
+						</span>
+					</div>
+				</j:forEach>
+			</j:if>
 		</div>
 		<div class="stackTrace">
 			<h3>Stack Trace</h3>
 			<pre>${it.stackTrace == null ? "No StackTrace" : test.stackTrace}</pre>
 		</div>
+		<j:if test="${publishers != null}">
+			<j:forEach var="publisher" items="${publishers}">
+				<j:set var="test" value="${it}"/>
+				<div class="summary ${publisher.displayName}">
+					<h3>${publisher.displayName}</h3>
+					<span>
+						<st:include it="${publisher}" page="summary.jelly" />
+					</span>
+				</div>
+			</j:forEach>
+		</j:if>
 	</div>
 </j:jelly>
