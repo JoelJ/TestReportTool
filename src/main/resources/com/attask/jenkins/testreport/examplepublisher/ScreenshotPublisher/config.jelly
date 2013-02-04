@@ -1,3 +1,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<h1>After</h1>
+	<f:entry title="Pattern" field="pattern">
+		<f:textbox />
+	</f:entry>
 </j:jelly>

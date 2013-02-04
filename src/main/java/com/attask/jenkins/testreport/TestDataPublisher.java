@@ -24,6 +24,20 @@ public abstract class TestDataPublisher extends AbstractDescribableImpl<TestData
 	}
 
 	/**
+	 * @return If true, will include float.jelly on the test result page (unless #each returns false)
+	 */
+	public boolean includeFloat() {
+		return true;
+	}
+
+	/**
+	 * @return If true, will include float.jelly on the test result page (unless #each returns false)
+	 */
+	public boolean includeSummary() {
+		return true;
+	}
+
+	/**
 	 * @return The name of the column.
 	 */
 	public abstract String getDisplayName();
@@ -44,6 +58,8 @@ public abstract class TestDataPublisher extends AbstractDescribableImpl<TestData
 	 * Determines if the cell.jelly should be rendered in the custom column for this row.
 	 * Currently is only applied to failures.
 	 * @param build The build the give test result belongs to.
+	 *                 In the case of a parent matrix job, this is the parent matrix job, as expected.
+	 *                 To get the matrix build that actually ran the test, call testResult.findRun().
 	 * @param testResult The test result that is about to be rendered.
 	 * @return True if the cell.jelly should be rendered.
 	 * @throws IOException
