@@ -48,7 +48,7 @@ public class ScreenshotPublisher extends TestDataPublisher {
 	@Override
 	public boolean each(AbstractBuild<?, ?> build, TestResult testResult) throws IOException, InterruptedException {
 		EnvVars envVars = new EnvVars();
-		envVars.put("TEST_NAME", Pattern.quote(testResult.getName()));
+		envVars.put("TEST_NAME", Pattern.quote(testResult.getName().replace("#", ".")));
 		String pattern = envVars.expand(this.pattern);
 
 		Pattern compiledPattern = Pattern.compile(pattern);
@@ -61,9 +61,12 @@ public class ScreenshotPublisher extends TestDataPublisher {
 		String url = null;
 		if(artifacts != null) {
 			for (Run.Artifact artifact : artifacts) {
-				if(compiledPattern.matcher(artifact.getDisplayPath()).matches()) {
-					url = artifact.getHref();
-					break;
+				String displayPath = artifact.getDisplayPath();
+				if(displayPath != null) {
+					if(compiledPattern.matcher(displayPath.replace("#", ".")).matches()) {
+						url = artifact.getHref();
+						break;
+					}
 				}
 			}
 		}
