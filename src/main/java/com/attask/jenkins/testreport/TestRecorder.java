@@ -23,10 +23,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * User: Joel Johnson
@@ -90,9 +87,12 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 	 */
 	@Override
 	public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
-		List<TestDataPublisher> testDataPublisherList = new ArrayList<TestDataPublisher>(testDataPublishers.size());
-		for (TestDataPublisher testDataPublisher : testDataPublishers) {
-			testDataPublisherList.add(testDataPublisher);
+		List<TestDataPublisher> testDataPublisherList = Collections.emptyList();
+		if(testDataPublishers != null) {
+			testDataPublisherList = new ArrayList<TestDataPublisher>(testDataPublishers.size());
+			for (TestDataPublisher testDataPublisher : testDataPublishers) {
+				testDataPublisherList.add(testDataPublisher);
+			}
 		}
 		return new TestResultMatrixAggregator(build, launcher, listener, testDataPublisherList);
 	}
