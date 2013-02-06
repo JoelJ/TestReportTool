@@ -17,7 +17,7 @@
 			</j:forEach>
 		</j:if>
 
-		<td class="pane time" data="{it.time}">${it.time}ms</td>
+		<td class="pane time" data="${it.findPaddedTime()}">${it.findTimeSpanString()}</td>
 		<td class="pane age">
 			<a href="${rootURL}/${it.findFirstFailureUrl()}${it.url}">${it.age}</a>
 		</td>

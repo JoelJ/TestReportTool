@@ -1,6 +1,7 @@
 package com.attask.jenkins.testreport;
 
 import hudson.FilePath;
+import hudson.Util;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
 import hudson.model.AbstractBuild;
@@ -55,6 +56,21 @@ public class TestResult implements Comparable<TestResult> {
 	@Exported
 	public int getTime() {
 		return time;
+	}
+
+	public String findTimeSpan() {
+		return Util.getTimeSpanString(getTime());
+	}
+
+	public String findPaddedTime() {
+		String time = String.valueOf(getTime());
+		int length = 10 - time.length();
+		StringBuilder result = new StringBuilder();
+		for(int i = 0; i < length; i++) {
+			result.append('0');
+		}
+		result.append(time);
+		return result.toString();
 	}
 
 	@Exported
