@@ -30,11 +30,13 @@ public class TestResultMatrixAggregator extends MatrixAggregator {
 			String uniquifier = null;
 			String url = "testReport";
 			for (MatrixRun run : runs) {
-				List<TestResultAction> actions = run.getActions(TestResultAction.class);
-				if(actions != null) {
-					for (TestResultAction action : actions) {
-						testResults.addAll(action.getTestResults().values());
-						uniquifier = action.getUniquifier();
+				if(run.getNumber() == build.getNumber()) {
+					List<TestResultAction> actions = run.getActions(TestResultAction.class);
+					if(actions != null) {
+						for (TestResultAction action : actions) {
+							testResults.addAll(action.getTestResults().values());
+							uniquifier = action.getUniquifier();
+						}
 					}
 				}
 			}
