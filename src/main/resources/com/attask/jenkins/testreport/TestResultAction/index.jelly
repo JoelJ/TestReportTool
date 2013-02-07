@@ -35,7 +35,7 @@
 				<j:if test="${publishers != null and publishers.size() > 0}">
 					<div class="before">
 						<j:forEach var="publisher" items="${publishers}">
-							<j:if test="${publisher.before(build, testResults.values())}">
+							<j:if test="${publisher.before(build, it.testResults.values())}">
 								<st:include it="${publisher}" page="before.jelly" />
 							</j:if>
 						</j:forEach>
@@ -71,7 +71,7 @@
 				<j:if test="${publishers != null and publishers.size() > 0}">
 					<div class="after">
 						<j:forEach var="publisher" items="${publishers}">
-							<j:if test="${publisher.after(build, testResults.values())}">
+							<j:if test="${publisher.after(build, it.testResults.values())}">
 								<st:include it="${publisher}" page="after.jelly" />
 							</j:if>
 						</j:forEach>
