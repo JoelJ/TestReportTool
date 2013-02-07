@@ -30,8 +30,9 @@ public class TestResult implements Comparable<TestResult> {
 	private final int age;
 	private final String firstFailingBuildId;
 	private final String url;
+	private final String uniquifier;
 
-	public TestResult(String name, int time, String threadId, TestStatus status, String runId, String stackTrace, int age, String firstFailingBuildId, String url) {
+	public TestResult(String name, int time, String threadId, TestStatus status, String runId, String stackTrace, int age, String firstFailingBuildId, String url, String uniquifier) {
 		this.name = name;
 		this.time = time;
 		this.threadId = threadId;
@@ -41,6 +42,7 @@ public class TestResult implements Comparable<TestResult> {
 		this.age = age;
 		this.firstFailingBuildId = firstFailingBuildId;
 		this.url = url;
+		this.uniquifier = uniquifier;
 	}
 
 	@Exported
@@ -60,6 +62,11 @@ public class TestResult implements Comparable<TestResult> {
 
 	public String findTimeSpan() {
 		return Util.getTimeSpanString(getTime());
+	}
+
+	@Exported
+	public String getUniquifier() {
+		return uniquifier;
 	}
 
 	public String findPaddedTime() {
@@ -207,11 +214,11 @@ public class TestResult implements Comparable<TestResult> {
 			switch (testStatus) {
 				case ADDED:
 				case STARTED:
-					result = parseSimple(testStatus, token, build, url);
+					result = parseSimple(testStatus, token, build, url, uniqueId);
 					break;
 				case FINISHED:
 				case SKIPPED:
-					result = parseSimplePlusMetadata(file, lineNumber, testStatus, token, build, url);
+					result = parseSimplePlusMetadata(file, lineNumber, testStatus, token, build, url, uniqueId);
 					break;
 				case FAILED:
 					String[] tokenizedLine = token.split("\\s");
@@ -233,7 +240,7 @@ public class TestResult implements Comparable<TestResult> {
 					int linesToAdvance = readStackTrace(fileLines, lineNumber, stackTrace);
 					lineNumber += linesToAdvance;
 
-					result = new TestResult(name, runTime, threadId, testStatus, getRealExternalizableId(build), stackTrace.toString(), ageStat.age, ageStat.firstFailingBuild, url);
+					result = new TestResult(name, runTime, threadId, testStatus, getRealExternalizableId(build), stackTrace.toString(), ageStat.age, ageStat.firstFailingBuild, url, uniqueId);
 					break;
 				default:
 					throw new IllegalFailureFileFormatException(file, lineNumber, "Status not implemented: " + testStatus);
@@ -262,11 +269,11 @@ public class TestResult implements Comparable<TestResult> {
 		return count;
 	}
 
-	private static TestResult parseSimple(TestStatus status, String token, AbstractBuild build, String url) {
-		return new TestResult(token.trim(), -1, null, status, getRealExternalizableId(build), null, 0, null, url);
+	private static TestResult parseSimple(TestStatus status, String token, AbstractBuild build, String url, String uniquifier) {
+		return new TestResult(token.trim(), -1, null, status, getRealExternalizableId(build), null, 0, null, url, uniquifier);
 	}
 
-	private static TestResult parseSimplePlusMetadata(FilePath file, int lineNumber, TestStatus status, String token, AbstractBuild build, String url) {
+	private static TestResult parseSimplePlusMetadata(FilePath file, int lineNumber, TestStatus status, String token, AbstractBuild build, String url, String uniquifier) {
 		String[] split = token.split("\\s");
 		String name = split[0];
 		String threadId;
@@ -281,7 +288,7 @@ public class TestResult implements Comparable<TestResult> {
 		} else {
 			throw new IllegalFailureFileFormatException(file, lineNumber, "Missing Runtime");
 		}
-		return new TestResult(name, runTime, threadId, status, getRealExternalizableId(build), null, 0, null, url);
+		return new TestResult(name, runTime, threadId, status, getRealExternalizableId(build), null, 0, null, url, uniquifier);
 	}
 
 	static String getRealExternalizableId(Run build) {
