@@ -1,5 +1,13 @@
 <j:jelly xmlns:j="jelly:core">
 	<style>
+		.History>span {
+			display: block;
+			padding: 8px;
+			padding-bottom: 15px;
+			background-color: #eef;
+			border: 1px solid #aaf;
+		}
+
 		#historyGraph {
 			width: 100px;
 			height: 100px;
@@ -49,5 +57,10 @@
 			<a href="${rootURL}/${test.findRun().url}testReport/test?name=${test.nameUrlEncoded}" style="height: ${ (test.time / it.maxTime) * 100 }%;" id="build-${test.runId}" class="${test.status}" time="${test.time}">
 			</a>
 		</j:forEach>
+
+		<div style="">
+			<span style="float: left">older</span>
+			<span style="float: right">newer</span>
+		</div>
 	</div>
 </j:jelly>

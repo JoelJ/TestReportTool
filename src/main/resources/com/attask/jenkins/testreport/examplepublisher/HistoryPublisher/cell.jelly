@@ -5,13 +5,16 @@
 		}
 
 		#historyGraph {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
 			width: 100%;
 			height: 100%;
+		}
+
+		#historyGraph>div {
+			position: absolute;
+			top: 3px;
+			bottom: 3px;
+			left: 3px;
+			right: 3px;
 		}
 
 		#historyGraph a {
@@ -52,9 +55,11 @@
 	</style>
 
 	<div id="historyGraph">
-		<j:forEach var="test" items="${it.history}">
-			<a href="${rootURL}/${test.findRun().url}testReport/test?name=${test.nameUrlEncoded}" id="build-${test.runId}" class="${test.status}" time="${test.time}">
-			</a>
-		</j:forEach>
+		<div>
+			<j:forEach var="test" items="${it.history}">
+				<a href="${rootURL}/${test.findRun().url}testReport/test?name=${test.nameUrlEncoded}" id="build-${test.runId}" class="${test.status}" time="${test.time}">
+				</a>
+			</j:forEach>
+		</div>
 	</div>
 </j:jelly>
