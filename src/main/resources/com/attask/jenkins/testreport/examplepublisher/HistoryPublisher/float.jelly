@@ -1,0 +1,52 @@
+<j:jelly xmlns:j="jelly:core">
+	<style>
+		#historyGraph {
+			width: 100px;
+			height: 100px;
+		}
+
+		#historyGraph a {
+			background-color: #aaa;
+			outline: 1px solid #888;
+			display: inline-block;
+
+			height: 100%;
+			bottom: 0;
+			width: ${100 / it.history.size()}%;
+			vertical-align: bottom;
+			z-index: 0;
+		}
+
+		#historyGraph .FINISHED {
+			background-color: green;
+			outline: 1px solid darkgreen;
+		}
+
+		#historyGraph .FAILED {
+			background-color: red;
+			outline: 1px solid #BB0000;
+		}
+
+		#historyGraph a:hover {
+			background-color: #ccc;
+			z-index: 1;
+		}
+
+		#historyGraph .FINISHED:hover {
+			background-color: #00BB00;
+			z-index: 1;
+		}
+
+		#historyGraph .FAILED:hover {
+			background-color: #FF7777;
+			z-index: 1;
+		}
+	</style>
+
+	<div id="historyGraph">
+		<j:forEach var="test" items="${it.history}">
+			<a href="${rootURL}/${test.findRun().url}testReport/test?name=${test.nameUrlEncoded}" style="height: ${ (test.time / it.maxTime) * 100 }%;" id="build-${test.runId}" class="${test.status}" time="${test.time}">
+			</a>
+		</j:forEach>
+	</div>
+</j:jelly>

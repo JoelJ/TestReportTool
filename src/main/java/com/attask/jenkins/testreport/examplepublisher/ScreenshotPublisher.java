@@ -91,7 +91,7 @@ public class ScreenshotPublisher extends TestDataPublisher {
 	}
 
 	@Override
-	public boolean includeFloat() {
+	public boolean includeFloat(AbstractBuild<?, ?> build, TestResult testResult) {
 		return false;
 	}
 
