@@ -16,12 +16,9 @@
 				margin-left: 2em;
 			}
 
-			#TestResult .floatPanel {
-				height: 75px;
-			}
-
 			#TestResult .floatPanel>.float {
-				float: left;
+				display: inline-block;
+				vertical-align: top;
 				margin: 5px;
 			}
 		</style>
