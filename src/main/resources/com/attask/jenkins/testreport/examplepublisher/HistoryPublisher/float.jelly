@@ -6,6 +6,15 @@
 			padding-bottom: 15px;
 			background-color: #eef;
 			border: 1px solid #aaf;
+
+			background: rgb(240,249,255); /* Old browsers */
+			background: -moz-linear-gradient(top,  rgba(240,249,255,1) 0%, rgba(203,235,255,1) 47%, rgba(161,219,255,1) 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(240,249,255,1)), color-stop(47%,rgba(203,235,255,1)), color-stop(100%,rgba(161,219,255,1))); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f9ff', endColorstr='#a1dbff',GradientType=0 ); /* IE6-9 */
 		}
 
 		#historyGraph {
@@ -15,6 +24,16 @@
 
 		#historyGraph a {
 			background-color: #aaa;
+
+			background: #eeeeee; /* Old browsers */
+			background: -moz-linear-gradient(top,  #eeeeee 0%, #bfbfbf 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#bfbfbf)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #eeeeee 0%,#bfbfbf 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #eeeeee 0%,#bfbfbf 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #eeeeee 0%,#bfbfbf 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  #eeeeee 0%,#bfbfbf 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#bfbfbf',GradientType=0 ); /* IE6-9 */
+
 			outline: 1px solid #888;
 			display: inline-block;
 
@@ -29,26 +48,69 @@
 		#historyGraph .FINISHED {
 			background-color: green;
 			outline: 1px solid darkgreen;
+
+			background: #b1ff59; /* Old browsers */
+			background: -moz-linear-gradient(top,  #b1ff59 0%, #7adb1a 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b1ff59), color-stop(100%,#7adb1a)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #b1ff59 0%,#7adb1a 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #b1ff59 0%,#7adb1a 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #b1ff59 0%,#7adb1a 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  #b1ff59 0%,#7adb1a 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b1ff59', endColorstr='#7adb1a',GradientType=0 ); /* IE6-9 */
+
 		}
 
 		#historyGraph .FAILED {
 			background-color: red;
 			outline: 1px solid #BB0000;
+
+			background: #ff817c;
+			background: -moz-linear-gradient(top, #ff817c 0%, #d83a3a 100%);
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ff817c), color-stop(100%,#d83a3a));
+			background: -webkit-linear-gradient(top, #ff817c 0%,#d83a3a 100%);
+			background: -o-linear-gradient(top, #ff817c 0%,#d83a3a 100%);
+			background: -ms-linear-gradient(top, #ff817c 0%,#d83a3a 100%);
+			background: linear-gradient(to bottom, #ff817c 0%,#d83a3a 100%);
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff817c', endColorstr='#d83a3a',GradientType=0 );
 		}
 
 		#historyGraph a:hover {
-			background-color: #ccc;
 			z-index: 1;
+
+			background: #ededed; /* Old browsers */
+			background: -moz-linear-gradient(top,  #ededed 0%, #d8d8d8 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ededed), color-stop(100%,#d8d8d8)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #ededed 0%,#d8d8d8 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #ededed 0%,#d8d8d8 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #ededed 0%,#d8d8d8 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  #ededed 0%,#d8d8d8 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#d8d8d8',GradientType=0 ); /* IE6-9 */
 		}
 
 		#historyGraph .FINISHED:hover {
-			background-color: #00BB00;
 			z-index: 1;
+
+			background: #deff7c;
+			background: -moz-linear-gradient(top, #deff7c 0%, #9fe25d 100%);
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deff7c), color-stop(100%,#9fe25d));
+			background: -webkit-linear-gradient(top, #deff7c 0%,#9fe25d 100%);
+			background: -o-linear-gradient(top, #deff7c 0%,#9fe25d 100%);
+			background: -ms-linear-gradient(top, #deff7c 0%,#9fe25d 100%);
+			background: linear-gradient(to bottom, #deff7c 0%,#9fe25d 100%);
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deff7c', endColorstr='#9fe25d',GradientType=0 );
 		}
 
 		#historyGraph .FAILED:hover {
-			background-color: #FF7777;
 			z-index: 1;
+
+			background: #ffa6a3; /* Old browsers */
+			background: -moz-linear-gradient(top,  #ffa6a3 0%, #d66d6d 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffa6a3), color-stop(100%,#d66d6d)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #ffa6a3 0%,#d66d6d 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #ffa6a3 0%,#d66d6d 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #ffa6a3 0%,#d66d6d 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  #ffa6a3 0%,#d66d6d 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffa6a3', endColorstr='#d66d6d',GradientType=0 ); /* IE6-9 */
 		}
 	</style>
 
