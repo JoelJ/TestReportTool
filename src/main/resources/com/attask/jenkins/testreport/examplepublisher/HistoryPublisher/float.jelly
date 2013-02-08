@@ -11,6 +11,7 @@
 			display: inline-block;
 
 			height: 100%;
+			min-height: 10px;
 			bottom: 0;
 			width: ${100 / it.history.size()}%;
 			vertical-align: bottom;
