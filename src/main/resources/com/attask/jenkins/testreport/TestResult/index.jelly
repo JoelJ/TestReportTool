@@ -17,7 +17,7 @@
 			<j:if test="${publishers != null}">
 				<j:set var="test" value="${it}"/>
 				<j:forEach var="publisher" items="${publishers}">
-					<j:if test="${publisher.includeFloat() and publisher.each(build, test)}">
+					<j:if test="${publisher.includeFloat(build, test) and publisher.each(build, test)}">
 						<div class="float ${publisher.displayName}">
 							<h3>${publisher.displayName}</h3>
 							<span>
@@ -35,7 +35,7 @@
 		<j:if test="${publishers != null}">
 			<j:forEach var="publisher" items="${publishers}">
 				<j:set var="test" value="${it}"/>
-				<j:if test="${publisher.includeSummary() and publisher.each(build, test)}">
+				<j:if test="${publisher.includeSummary(build, test) and publisher.each(build, test)}">
 					<div class="summary ${publisher.displayName}">
 						<h3>${publisher.displayName}</h3>
 						<span>

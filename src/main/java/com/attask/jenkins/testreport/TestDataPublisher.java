@@ -26,14 +26,14 @@ public abstract class TestDataPublisher extends AbstractDescribableImpl<TestData
 	/**
 	 * @return If true, will include float.jelly on the test result page (unless #each returns false)
 	 */
-	public boolean includeFloat() {
+	public boolean includeFloat(AbstractBuild<?, ?> build, TestResult testResult) {
 		return true;
 	}
 
 	/**
 	 * @return If true, will include float.jelly on the test result page (unless #each returns false)
 	 */
-	public boolean includeSummary() {
+	public boolean includeSummary(AbstractBuild<?, ?> build, TestResult testResult) {
 		return true;
 	}
 
