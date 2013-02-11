@@ -24,6 +24,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * User: Joel Johnson
@@ -32,6 +33,7 @@ import java.util.*;
  */
 @ExportedBean
 public class TestRecorder extends Recorder implements MatrixAggregatable {
+	private static final Logger log = Logger.getLogger(TestRecorder.class.getCanonicalName());
 	private final String resultsFilePattern;
 	private final String uniquifier;
 	private final String url;
@@ -50,7 +52,7 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
 		EnvVars environment = build.getEnvironment(listener);
 		String expandedResultsFilePattern = environment.expand(resultsFilePattern);
-		String[] includedFiles = findResultsArtifacts(build, launcher, expandedResultsFilePattern);
+		String[] includedFiles = findResultsArtifacts(build, launcher, expandedResultsFilePattern, listener);
 		if(includedFiles == null || includedFiles.length <= 0) {
 			listener.getLogger().println("No files matched " + expandedResultsFilePattern + " in the workspace.");
 			return false;
@@ -97,8 +99,15 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 		return new TestResultMatrixAggregator(build, launcher, listener, testDataPublisherList);
 	}
 
-	private String[] findResultsArtifacts(AbstractBuild<?, ?> build, Launcher launcher, String resultsFilePattern) throws IOException, InterruptedException {
-		return build.getWorkspace().act(new WorkspaceIteratorCallable(resultsFilePattern, launcher.isUnix()));
+	private String[] findResultsArtifacts(AbstractBuild<?, ?> build, Launcher launcher, String resultsFilePattern, BuildListener listener) throws IOException, InterruptedException {
+		FilePath workspace = build.getWorkspace();
+		if(workspace == null) {
+			String errorMessage = "There was no workspace! Was the machine torn down?";
+			log.warning(errorMessage + " " + build.getFullDisplayName());
+			listener.error(errorMessage);
+			return new String[0];
+		}
+		return workspace.act(new WorkspaceIteratorCallable(resultsFilePattern, launcher.isUnix()));
 	}
 
 	@Exported
