@@ -37,7 +37,7 @@ public class HistoryPublisher extends TestDataPublisher {
 
 	@Override
 	public boolean includeFloat(AbstractBuild<?, ?> build, TestResult testResult) {
-		int historyCount = 10;
+		int historyCount = 25;
 		StaplerRequest currentRequest = Stapler.getCurrentRequest();
 		if(currentRequest != null) {
 			String historyCountParam = currentRequest.getParameter("historyCount");
