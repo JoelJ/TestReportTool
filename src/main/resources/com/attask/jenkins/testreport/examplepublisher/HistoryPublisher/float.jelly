@@ -1,5 +1,9 @@
 <j:jelly xmlns:j="jelly:core">
 	<style>
+		.History {
+			width: 50%;
+		}
+
 		.History>span {
 			display: block;
 			padding: 8px;
@@ -18,8 +22,9 @@
 		}
 
 		#historyGraph {
-			width: 100px;
-			height: 100px;
+			min-width: 100px;
+			width: 100%;
+			height: 200px;
 		}
 
 		#historyGraph a {
