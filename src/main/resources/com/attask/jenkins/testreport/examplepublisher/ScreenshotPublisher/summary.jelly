@@ -1,3 +1,10 @@
 <j:jelly xmlns:j="jelly:core">
-	<a href="${it.currentUrl}" target="_blank"><img src="${it.currentUrl}" /></a>
+	<style>
+		#testScreenshot img {
+			max-width: 80%;
+		}
+	</style>
+	<a id="testScreenshot" href="${it.currentUrl}" target="_blank">
+		<img src="${it.currentUrl}" />
+	</a>
 </j:jelly>

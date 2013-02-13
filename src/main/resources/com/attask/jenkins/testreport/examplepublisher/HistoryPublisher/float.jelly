@@ -2,6 +2,7 @@
 	<style>
 		.History {
 			width: 50%;
+			max-width: 1000px;
 		}
 
 		.History>span {
@@ -24,7 +25,6 @@
 		#historyGraph {
 			min-width: 100px;
 			width: 100%;
-			height: 200px;
 		}
 
 		#historyGraph a {
