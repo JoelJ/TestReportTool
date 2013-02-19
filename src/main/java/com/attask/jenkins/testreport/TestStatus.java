@@ -6,7 +6,12 @@ package com.attask.jenkins.testreport;
  * Time: 2:14 PM
  */
 public enum TestStatus {
-	ADDED, STARTED, FINISHED, SKIPPED, FAILED;
+	// These are in order of importance.
+	ADDED,
+	STARTED,
+	SKIPPED,
+	FAILED,
+	FINISHED;
 
 	public boolean isMoreInterestingThan(TestStatus status) {
 		if(status == null) {
