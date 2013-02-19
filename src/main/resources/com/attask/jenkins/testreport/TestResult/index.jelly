@@ -14,6 +14,11 @@
 				<h3>Age</h3>
 				<span>${it.age}</span>
 			</div>
+			<div class="original float">
+				<h3>Original Job</h3>
+				<j:set var="originalRun" value="${it.findRun()}"/>
+				<span>${originalRun.fullDisplayName}</span>
+			</div>
 			<j:if test="${publishers != null}">
 				<j:set var="test" value="${it}"/>
 				<j:forEach var="publisher" items="${publishers}">
