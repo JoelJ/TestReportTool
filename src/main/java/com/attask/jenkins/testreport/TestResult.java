@@ -12,6 +12,8 @@ import org.kohsuke.stapler.export.ExportedBean;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * User: Joel Johnson
@@ -139,6 +141,25 @@ public class TestResult implements Comparable<TestResult> {
 	@Exported
 	public String getStackTrace() {
 		return stackTrace;
+	}
+
+	public String htmlifyStackTrace() {
+		Pattern pattern = Pattern.compile("((:?[\\$a-zA-Z0-9_]+\\.)+(:?[\\$a-zA-Z0-9_]+))\\((:?([\\$a-zA-Z0-9_]+)\\.[\\$a-zA-Z0-9_]+:(\\d+)|Unknown Source|Native Method)\\)");
+
+		StringBuilder sb = new StringBuilder();
+		Scanner scanner = new Scanner(stackTrace);
+		while(scanner.hasNextLine()) {
+			String line = Util.escape(scanner.nextLine());
+			Matcher matcher = pattern.matcher(line);
+			if(matcher.find()) {
+				String fullyQualifiedName = matcher.group(1); // This is the fully qualified method name
+				sb.append("<pre name=\"").append(fullyQualifiedName).append("\">").append(line).append("</pre>");
+			} else {
+				sb.append("<pre>").append(line).append("</pre>");
+			}
+		}
+		return sb.toString();
+
 	}
 
 	@Exported

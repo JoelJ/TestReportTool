@@ -46,7 +46,7 @@ ResultPage = {
 				method: 'post',
 				evalJS: 'false',
 				onSuccess: function(t) {
-					stackTraceElement.innerText = t.responseText;
+					stackTraceElement.innerHTML = t.responseText;
 				},
 				onError: function(t) {
 					console.log("Ajax Fail", t);

@@ -30,7 +30,7 @@
 		</div>
 		<div class="stackTrace">
 			<h3>Stack Trace</h3>
-			<pre>${it.stackTrace == null ? "No StackTrace" : test.stackTrace}</pre>
+			<pre>${it.stackTrace == null ? "No StackTrace" : test.htmlifyStackTrace()}</pre>
 		</div>
 		<j:if test="${publishers != null}">
 			<j:forEach var="publisher" items="${publishers}">

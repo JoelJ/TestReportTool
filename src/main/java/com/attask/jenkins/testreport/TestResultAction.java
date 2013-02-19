@@ -91,7 +91,7 @@ public class TestResultAction extends AbstractTestResultAction {
 		String name = request.getParameter("name");
 		TestResult testResult = testResults.get(name);
 		ServletOutputStream outputStream = response.getOutputStream();
-		outputStream.print(testResult.getStackTrace());
+		outputStream.print(testResult.htmlifyStackTrace());
 		outputStream.flush();
 	}
 
