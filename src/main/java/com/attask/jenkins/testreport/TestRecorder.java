@@ -36,15 +36,14 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 	private static final Logger log = Logger.getLogger(TestRecorder.class.getCanonicalName());
 	private final String resultsFilePattern;
 	private final String uniquifier;
-	private final String url;
+	private transient final String url = "testReport";
 	private final DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers;
 
 	@DataBoundConstructor
-	public TestRecorder(String resultsFilePattern, String uniquifier, String url, DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers) {
+	public TestRecorder(String resultsFilePattern, String uniquifier, DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers) {
 		//This constructor isn't automatically bound. It's manually bound in the DescriptorImpl class
 		this.resultsFilePattern = resultsFilePattern;
 		this.uniquifier = uniquifier;
-		this.url = url;
 		this.testDataPublishers = testDataPublishers;
 	}
 
@@ -60,11 +59,10 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 
 		FilePath workspace = build.getWorkspace();
 		String expandedUniquifier = environment.expand(uniquifier);
-		String expandedUrl = environment.expand(url);
 		LinkedList<TestResult> results = new LinkedList<TestResult>();
 		for (String includedFile : includedFiles) {
 			listener.getLogger().println("Parsing: " + includedFile);
-			Collection<TestResult> testResults = TestResult.parse(new FilePath(workspace, includedFile), build, expandedUniquifier, expandedUrl);
+			Collection<TestResult> testResults = TestResult.parse(new FilePath(workspace, includedFile), build, expandedUniquifier, url);
 			listener.getLogger().println("\t - contained " + testResults.size() + " results.");
 			results.addAll(testResults);
 		}
@@ -74,7 +72,7 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 			testDataPublisherList.add(testDataPublisher);
 		}
 
-		TestResultAction resultAction = new TestResultAction(build, results, expandedUniquifier, expandedUrl, testDataPublisherList);
+		TestResultAction resultAction = new TestResultAction(build, results, expandedUniquifier, url, testDataPublisherList);
 
 		if(resultAction.getFailCount() > 0) {
 			build.setResult(Result.UNSTABLE);
@@ -146,7 +144,6 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 		public Publisher newInstance(StaplerRequest req, JSONObject formData) throws hudson.model.Descriptor.FormException {
 			String resultsFilePattern = formData.getString("resultsFilePattern");
 			String uniquifier = formData.getString("uniquifier");
-			String url = formData.getString("url");
 
 			DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers = new DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>>(Saveable.NOOP);
 			try {
@@ -155,7 +152,7 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 				throw new FormException(e,null);
 			}
 
-			return new TestRecorder(resultsFilePattern, uniquifier, url, testDataPublishers);
+			return new TestRecorder(resultsFilePattern, uniquifier, testDataPublishers);
 		}
 
 	}

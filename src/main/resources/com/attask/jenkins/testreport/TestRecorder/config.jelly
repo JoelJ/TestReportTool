@@ -8,9 +8,6 @@
 	<f:entry title="Uniquifier" field="uniquifier">
 		<f:textbox />
 	</f:entry>
-	<f:entry title="Url" field="url">
-		<f:textbox default="testReport" />
-	</f:entry>
 
 	<!--Copied from Junit Plugin-->
 	<j:invokeStatic var="testDataPublisherDescriptors"
