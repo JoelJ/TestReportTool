@@ -101,7 +101,7 @@ public class TestResult implements Comparable<TestResult> {
 		return findRun(getRunId());
 	}
 
-	private static Run findRun(String id) {
+	public static Run findRun(String id) {
 		if(id == null) {
 			return null;
 		}
@@ -203,7 +203,7 @@ public class TestResult implements Comparable<TestResult> {
 		return run.getUrl();
 	}
 
-	public static Collection<TestResult> parse(FilePath file, AbstractBuild build, String uniqueId, String url) throws IOException, IllegalFormatException {
+	public static Collection<TestResult> parse(FilePath file, Run build, String uniqueId, String url) throws IOException, IllegalFormatException {
 		Map<TestResult, TestStatus> results = new HashMap<TestResult, TestStatus>();
 
 		List<String> fileLines = Arrays.asList(file.readToString().split("\r?\n"));
@@ -290,11 +290,11 @@ public class TestResult implements Comparable<TestResult> {
 		return count;
 	}
 
-	private static TestResult parseSimple(TestStatus status, String token, AbstractBuild build, String url, String uniquifier) {
+	private static TestResult parseSimple(TestStatus status, String token, Run build, String url, String uniquifier) {
 		return new TestResult(token.trim(), -1, null, status, getRealExternalizableId(build), null, 0, null, url, uniquifier);
 	}
 
-	private static TestResult parseSimplePlusMetadata(FilePath file, int lineNumber, TestStatus status, String token, AbstractBuild build, String url, String uniquifier) {
+	private static TestResult parseSimplePlusMetadata(FilePath file, int lineNumber, TestStatus status, String token, Run build, String url, String uniquifier) {
 		String[] split = token.split("\\s");
 		String name = split[0];
 		String threadId;
