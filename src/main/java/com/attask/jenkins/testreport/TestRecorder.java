@@ -166,7 +166,7 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 		return BuildStepMonitor.NONE;
 	}
 
-	private static class WorkspaceIteratorCallable implements FilePath.FileCallable<String[]> {
+	public static class WorkspaceIteratorCallable implements FilePath.FileCallable<String[]> {
 		private final String resultsFilePattern;
 		private final boolean unix;
 
