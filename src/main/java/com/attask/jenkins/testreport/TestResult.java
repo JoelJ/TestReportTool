@@ -312,7 +312,7 @@ public class TestResult implements Comparable<TestResult> {
 		return new TestResult(name, runTime, threadId, status, getRealExternalizableId(build), null, 0, null, url, uniquifier);
 	}
 
-	static String getRealExternalizableId(Run build) {
+	public static String getRealExternalizableId(Run build) {
 		if(build instanceof MatrixRun) {
 			MatrixBuild parentBuild = ((MatrixRun) build).getParentBuild();
 			String matrixId = parentBuild.getExternalizableId();
