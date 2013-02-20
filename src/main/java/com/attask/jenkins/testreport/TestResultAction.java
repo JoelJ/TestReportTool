@@ -1,5 +1,6 @@
 package com.attask.jenkins.testreport;
 
+import com.attask.jenkins.testreport.utils.RunUtils;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
 import hudson.model.AbstractBuild;
@@ -42,7 +43,7 @@ public class TestResultAction extends AbstractTestResultAction {
 			throw new NullPointerException("url");
 		}
 
-		this.buildId = TestResult.getRealExternalizableId(build);
+		this.buildId = RunUtils.getRealExternalizableId(build);
 		this.testResults = new HashMap<String, TestResult>(testResults.size());
 		this.testResultByStatus = new HashMap<TestStatus, List<TestResult>>();
 		for (TestResult testResult : testResults) {
