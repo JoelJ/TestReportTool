@@ -1,10 +1,8 @@
 package com.attask.jenkins.testreport;
 
+import com.attask.jenkins.testreport.utils.RunUtils;
 import hudson.FilePath;
 import hudson.Util;
-import hudson.matrix.MatrixBuild;
-import hudson.matrix.MatrixRun;
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -98,44 +96,7 @@ public class TestResult implements Comparable<TestResult> {
 	}
 
 	public Run findRun() {
-		return findRun(getRunId());
-	}
-
-	public static Run findRun(String id) {
-		if(id == null) {
-			return null;
-		}
-		if(!id.contains("$$")) {
-			return AbstractBuild.fromExternalizableId(id);
-		}
-
-		String[] ids = id.split("\\$\\$", 2);
-		if(ids.length != 2) {
-			return null;
-		}
-
-		String parentMatrixId = ids[0];
-		String childMatrixId = ids[1];
-
-		if(parentMatrixId == null || childMatrixId == null) {
-			//There were NPE showing up in the log from parentMatrixId being null. Adding this to get more visibility.
-			log.severe("String.split returned null in the array. How is that possible? original string:`" + id + "` split[0]: `" + parentMatrixId + "` split[1]: `" + childMatrixId + "`");
-			return null;
-		}
-
-		Run<?, ?> run = Run.fromExternalizableId(parentMatrixId);
-		if(run != null) {
-			if(run instanceof MatrixBuild) {
-				List<MatrixRun> runs = ((MatrixBuild) run).getRuns();
-				for (MatrixRun matrixRun : runs) {
-					if(matrixRun.getExternalizableId().equals(childMatrixId)) {
-						return matrixRun;
-					}
-				}
-			}
-		}
-
-		return null;
+		return RunUtils.findRun(getRunId());
 	}
 
 	@Exported
@@ -196,7 +157,7 @@ public class TestResult implements Comparable<TestResult> {
 	}
 
 	private String findMatrixBuildUrl(String matrixId) {
-		Run run = findRun(matrixId);
+		Run run = RunUtils.findRun(matrixId);
 		if(run == null) {
 			return null;
 		}
@@ -261,7 +222,7 @@ public class TestResult implements Comparable<TestResult> {
 					int linesToAdvance = readStackTrace(fileLines, lineNumber, stackTrace);
 					lineNumber += linesToAdvance;
 
-					result = new TestResult(name, runTime, threadId, testStatus, getRealExternalizableId(build), stackTrace.toString(), ageStat.age, ageStat.firstFailingBuild, url, uniqueId);
+					result = new TestResult(name, runTime, threadId, testStatus, RunUtils.getRealExternalizableId(build), stackTrace.toString(), ageStat.age, ageStat.firstFailingBuild, url, uniqueId);
 					break;
 				default:
 					throw new IllegalFailureFileFormatException(file, lineNumber, "Status not implemented: " + testStatus);
@@ -291,7 +252,7 @@ public class TestResult implements Comparable<TestResult> {
 	}
 
 	private static TestResult parseSimple(TestStatus status, String token, Run build, String url, String uniquifier) {
-		return new TestResult(token.trim(), -1, null, status, getRealExternalizableId(build), null, 0, null, url, uniquifier);
+		return new TestResult(token.trim(), -1, null, status, RunUtils.getRealExternalizableId(build), null, 0, null, url, uniquifier);
 	}
 
 	private static TestResult parseSimplePlusMetadata(FilePath file, int lineNumber, TestStatus status, String token, Run build, String url, String uniquifier) {
@@ -309,16 +270,7 @@ public class TestResult implements Comparable<TestResult> {
 		} else {
 			throw new IllegalFailureFileFormatException(file, lineNumber, "Missing Runtime");
 		}
-		return new TestResult(name, runTime, threadId, status, getRealExternalizableId(build), null, 0, null, url, uniquifier);
-	}
-
-	public static String getRealExternalizableId(Run build) {
-		if(build instanceof MatrixRun) {
-			MatrixBuild parentBuild = ((MatrixRun) build).getParentBuild();
-			String matrixId = parentBuild.getExternalizableId();
-			return matrixId + "$$" + build.getExternalizableId();
-		}
-		return build.getExternalizableId();
+		return new TestResult(name, runTime, threadId, status, RunUtils.getRealExternalizableId(build), null, 0, null, url, uniquifier);
 	}
 
 	/**
@@ -328,7 +280,7 @@ public class TestResult implements Comparable<TestResult> {
 		assert uniqueId != null : "null uniqueId";
 		AgeStat ageStat = new AgeStat();
 		ageStat.age = 1;
-		ageStat.firstFailingBuild = getRealExternalizableId(build);
+		ageStat.firstFailingBuild = RunUtils.getRealExternalizableId(build);
 		while((build = build.getPreviousBuild()) != null) {
 			TestResultAction testResultAction = build.getAction(TestResultAction.class);
 			if(testResultAction != null) {
