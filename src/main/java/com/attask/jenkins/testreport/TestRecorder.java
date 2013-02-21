@@ -1,5 +1,6 @@
 package com.attask.jenkins.testreport;
 
+import com.attask.jenkins.testreport.dynamicresults.DynamicTestResultsAction;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -13,7 +14,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
-import hudson.tasks.test.AbstractTestResultAction;
 import hudson.util.DescribableList;
 import net.sf.json.JSONObject;
 import org.apache.tools.ant.DirectoryScanner;
@@ -79,7 +79,7 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 			build.setResult(Result.UNSTABLE);
 		}
 
-		List<AbstractTestResultAction> oldTestResultActions = build.getActions(AbstractTestResultAction.class);
+		List<DynamicTestResultsAction> oldTestResultActions = build.getActions(DynamicTestResultsAction.class);
 		if(oldTestResultActions != null && !oldTestResultActions.isEmpty()) {
 			build.getActions().removeAll(oldTestResultActions);
 		}
