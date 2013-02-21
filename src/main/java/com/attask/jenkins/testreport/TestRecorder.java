@@ -135,6 +135,9 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 
 	@Extension
 	public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+
+		public static final String NAME = "Publish AtTask Test Results";
+
 		@Override
 		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
 			return true;
@@ -142,7 +145,7 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 
 		@Override
 		public String getDisplayName() {
-			return "Publish AtTask Test Results";
+			return NAME;
 		}
 
 		@Override

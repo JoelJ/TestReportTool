@@ -1,0 +1,3 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+	<st:include it="${it.createDelegatedAction()}" page="allTests.jelly" />
+</j:jelly>
