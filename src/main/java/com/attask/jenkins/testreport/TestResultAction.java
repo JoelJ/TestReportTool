@@ -4,6 +4,7 @@ import com.attask.jenkins.testreport.utils.RunUtils;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
 import hudson.model.AbstractBuild;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.tasks.test.AbstractTestResultAction;
 import org.kohsuke.stapler.StaplerRequest;
@@ -94,6 +95,18 @@ public class TestResultAction extends AbstractTestResultAction {
 		ServletOutputStream outputStream = response.getOutputStream();
 		outputStream.print(testResult.htmlifyStackTrace());
 		outputStream.flush();
+	}
+
+	public String findStatusUrl(Run build) {
+		Result result = build.getResult();
+		if(result == null) {
+			result = Result.NOT_BUILT;
+		}
+		String imageUrl = result.color.getImageOf("48x48");
+		if(build.isBuilding()) {
+			imageUrl = imageUrl.replace(".png", "_anime.gif");
+		}
+		return imageUrl;
 	}
 
 	@Exported
