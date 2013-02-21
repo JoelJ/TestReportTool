@@ -118,6 +118,25 @@
 			background: linear-gradient(to bottom,  #ffa6a3 0%,#d66d6d 100%); /* W3C */
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffa6a3', endColorstr='#d66d6d',GradientType=0 ); /* IE6-9 */
 		}
+
+		#historyGraph a {
+			opacity: 0.7;
+		}
+
+		#historyGraph a:hover,
+		#historyGraph a:nth-of-type(${it.currentIndex + 1}) {
+			opacity: 1.0;
+		}
+
+		<!--#historyGraph .FAILED:nth-of-type(${it.currentIndex + 1}) {-->
+			<!--background:none;-->
+			<!--background-color: red;-->
+		<!--}-->
+
+		<!--#historyGraph .FINISHED:nth-of-type(${it.currentIndex + 1}) {-->
+			<!--background:none;-->
+			<!--background-color: green;-->
+		<!--}-->
 	</style>
 
 	<div id="historyGraph">

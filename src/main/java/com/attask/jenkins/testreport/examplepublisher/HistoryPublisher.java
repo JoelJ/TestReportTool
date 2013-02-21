@@ -22,8 +22,12 @@ import java.util.List;
  * Time: 11:51 AM
  */
 public class HistoryPublisher extends TestDataPublisher {
+	private static final boolean INCLUDE_FUTURE_BUILDS = true;
+	private static final boolean ONLY_PREVIOUS_BUILDS = false;
+
 	public List<TestResult> history;
 	public int maxTime;
+	public int currentIndex;
 
 	@DataBoundConstructor
 	public HistoryPublisher() {
@@ -46,7 +50,7 @@ public class HistoryPublisher extends TestDataPublisher {
 			}
 		}
 
-		populateHistory(build, testResult, historyCount);
+		populateHistory(build, testResult, historyCount, INCLUDE_FUTURE_BUILDS);
 
 		return true;
 	}
@@ -70,7 +74,7 @@ public class HistoryPublisher extends TestDataPublisher {
 			}
 		}
 
-		populateHistory(build, testResult, 5);
+		populateHistory(build, testResult, 5, ONLY_PREVIOUS_BUILDS);
 		return true;
 	}
 
@@ -79,24 +83,62 @@ public class HistoryPublisher extends TestDataPublisher {
 		return false;
 	}
 
-	private void populateHistory(AbstractBuild<?, ?> build, TestResult testResult, int historyCount) {
-		List<TestResult> history = new ArrayList<TestResult>(historyCount);
-		Run next = build;
+	private void populateHistory(AbstractBuild<?, ?> build, TestResult testResult, int maxHistoryCount, boolean tryForward) {
+		List<TestResult> history = new ArrayList<TestResult>(maxHistoryCount);
 		int maxTime = Integer.MIN_VALUE;
-		while(historyCount > 0 && next != null) {
-			TestResultAction action = next.getAction(TestResultAction.class);
+
+		int historyCount = maxHistoryCount;
+
+		if(tryForward) {
+			Run next = build.getNextBuild();
+			while(next != null && historyCount > (maxHistoryCount / 2)) {
+				TestResultAction action = next.getAction(TestResultAction.class);
+				if(action != null) {
+					TestResult oldTestResult = action.getTestResults().get(testResult.getName());
+					if(oldTestResult != null && oldTestResult.getName().equals(testResult.getName())) {
+						historyCount--;
+						history.add(oldTestResult);
+						maxTime = Math.max(maxTime, oldTestResult.getTime());
+					}
+				}
+
+				next = next.getNextBuild();
+			}
+		}
+
+		Run previous = build;
+		TestResult current = null;
+		while(historyCount > 0 && previous != null) {
+			TestResultAction action = previous.getAction(TestResultAction.class);
 			if(action != null) {
 				TestResult oldTestResult = action.getTestResults().get(testResult.getName());
 				if(oldTestResult != null && oldTestResult.getName().equals(testResult.getName())) {
 					historyCount--;
 					history.add(0, oldTestResult);
 					maxTime = Math.max(maxTime, oldTestResult.getTime());
+					if(previous == build) {
+						current = oldTestResult;
+					}
 				}
 			}
-			next = next.getPreviousBuild();
+			previous = previous.getPreviousBuild();
 		}
 		this.history = history;
 		this.maxTime = maxTime;
+
+		int indexOf = history.size()-1;
+		if(current != null) {
+			int i = -1;
+			//have to manually search for it since equals/hashcode only goes off of the name.
+			for (TestResult result : history) {
+				i++;
+				if(result.getRunId().equals(current.getRunId())) {
+					indexOf = i;
+					break;
+				}
+			}
+		}
+		this.currentIndex = indexOf;
 	}
 
 	@Extension
