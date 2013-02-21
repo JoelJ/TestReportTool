@@ -58,7 +58,7 @@ public class RunUtils {
 				}
 			}
 		}
-
+		log.warning("Couldn't find build for id: " + id);
 		return null;
 	}
 }
