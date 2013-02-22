@@ -6,6 +6,9 @@ import com.attask.jenkins.testreport.TestRecorder;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
+import hudson.matrix.MatrixAggregatable;
+import hudson.matrix.MatrixAggregator;
+import hudson.matrix.MatrixBuild;
 import hudson.model.*;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
@@ -21,7 +24,7 @@ import java.util.List;
  * Date: 2/20/13
  * Time: 11:23 AM
  */
-public class DynamicTestResultsBuildWrapper extends BuildWrapper {
+public class DynamicTestResultsBuildWrapper extends BuildWrapper implements MatrixAggregatable {
 	@DataBoundConstructor
 	public DynamicTestResultsBuildWrapper() {
 
@@ -57,6 +60,17 @@ public class DynamicTestResultsBuildWrapper extends BuildWrapper {
 			@Override
 			public boolean tearDown(AbstractBuild build, BuildListener listener) throws IOException, InterruptedException {
 				return true; //Do nothing.
+			}
+		};
+	}
+
+	@Override
+	public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
+		return new MatrixAggregator(build, launcher, listener) {
+			@Override
+			public boolean startBuild() throws InterruptedException, IOException {
+				preCheckout(this.build, launcher, listener);
+				return true;
 			}
 		};
 	}

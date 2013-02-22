@@ -6,6 +6,8 @@ import com.attask.jenkins.testreport.TestResult;
 import com.attask.jenkins.testreport.TestResultAction;
 import com.attask.jenkins.testreport.utils.RunUtils;
 import hudson.FilePath;
+import hudson.matrix.MatrixBuild;
+import hudson.matrix.MatrixRun;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.Run;
@@ -13,7 +15,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 
-import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,8 +64,10 @@ public class DynamicTestResultsAction implements Action {
 		}
 		assert run instanceof AbstractBuild : "the run should be an abstract build since that is what was passed into the constructor.";
 
+		return createDelegatedAction((AbstractBuild) run);
+	}
 
-		AbstractBuild abstractBuild = (AbstractBuild) run;
+	private TestResultAction createDelegatedAction(AbstractBuild abstractBuild) throws IOException, InterruptedException {
 		cachedTestResultsAction = new TestResultAction(abstractBuild, findTestResults(), uniqueId, getUrlName(), this.getTestDataPublishers());
 		cacheCreateTime = System.currentTimeMillis();
 		return cachedTestResultsAction;
@@ -77,15 +80,30 @@ public class DynamicTestResultsAction implements Action {
 		}
 		assert run instanceof AbstractBuild : "the run should be an abstract build since that is what was passed into the constructor.";
 
-		AbstractBuild build = (AbstractBuild)run;
-		FilePath workspace = build.getWorkspace();
+		AbstractBuild abstractBuild = (AbstractBuild)run;
+		List<AbstractBuild> builds = new LinkedList<AbstractBuild>();
 
-		String[] files = workspace.act(new TestRecorder.WorkspaceIteratorCallable(failuresFilePattern, unix));
+		if(abstractBuild instanceof MatrixBuild) {
+			List<MatrixRun> runs = ((MatrixBuild) abstractBuild).getRuns();
+			for (MatrixRun matrixRun : runs) {
+				if(matrixRun.getNumber() == abstractBuild.getNumber()) {
+					builds.add(matrixRun);
+				}
+			}
+		} else {
+			builds.add(abstractBuild);
+		}
+
 		List<TestResult> result = new LinkedList<TestResult>();
-		for (String file : files) {
-			FilePath resultFile = new FilePath(workspace, file);
-			Collection<TestResult> parsed = TestResult.parse(resultFile, run, uniqueId, getUrlName());
-			result.addAll(parsed);
+		for (AbstractBuild build : builds) {
+			FilePath workspace = build.getWorkspace();
+
+			String[] files = workspace.act(new TestRecorder.WorkspaceIteratorCallable(failuresFilePattern, unix));
+			for (String file : files) {
+				FilePath resultFile = new FilePath(workspace, file);
+				Collection<TestResult> parsed = TestResult.parse(resultFile, run, uniqueId, getUrlName());
+				result.addAll(parsed);
+			}
 		}
 		return Collections.unmodifiableList(result);
 	}
