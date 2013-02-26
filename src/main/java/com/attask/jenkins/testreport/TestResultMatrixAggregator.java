@@ -1,5 +1,6 @@
 package com.attask.jenkins.testreport;
 
+import com.attask.jenkins.testreport.dynamicresults.DynamicTestResultsAction;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
@@ -40,9 +41,11 @@ public class TestResultMatrixAggregator extends MatrixAggregator {
 					}
 				}
 			}
-			if(uniquifier != null) {
-				build.addAction(new TestResultAction(build, testResults, uniquifier, url, testDataPublishers));
+			List<DynamicTestResultsAction> oldTestResultActions = build.getActions(DynamicTestResultsAction.class);
+			if(oldTestResultActions != null && !oldTestResultActions.isEmpty()) {
+				build.getActions().removeAll(oldTestResultActions);
 			}
+			build.addAction(new TestResultAction(build, testResults, uniquifier, url, testDataPublishers));
 		}
 
 		return true;
