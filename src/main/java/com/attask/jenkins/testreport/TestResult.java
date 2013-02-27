@@ -334,6 +334,21 @@ public class TestResult implements Comparable<TestResult> {
 		return this.getName().compareTo(o.getName());
 	}
 
+	public static boolean uniquifierMatches(TestResult first, TestResult second) {
+		if(first == null) {
+			throw new NullPointerException("first");
+		}
+		if(second == null) {
+			throw new NullPointerException("second");
+		}
+
+		if(first.getUniquifier() == null) {
+			return second.getUniquifier() == null;
+		}
+
+		return first.getUniquifier().equals(second.getUniquifier());
+	}
+
 	private static class AgeStat {
 		private int age;
 		private String firstFailingBuild;

@@ -95,7 +95,7 @@ public class HistoryPublisher extends TestDataPublisher {
 				TestResultAction action = next.getAction(TestResultAction.class);
 				if(action != null) {
 					TestResult oldTestResult = action.getTestResults().get(testResult.getName());
-					if(oldTestResult != null && oldTestResult.getName().equals(testResult.getName())) {
+					if(oldTestResult != null && oldTestResult.getName().equals(testResult.getName()) && TestResult.uniquifierMatches(testResult, oldTestResult)) {
 						historyCount--;
 						history.add(oldTestResult);
 						maxTime = Math.max(maxTime, oldTestResult.getTime());
@@ -112,7 +112,7 @@ public class HistoryPublisher extends TestDataPublisher {
 			TestResultAction action = previous.getAction(TestResultAction.class);
 			if(action != null) {
 				TestResult oldTestResult = action.getTestResults().get(testResult.getName());
-				if(oldTestResult != null && oldTestResult.getName().equals(testResult.getName())) {
+				if(oldTestResult != null && oldTestResult.getName().equals(testResult.getName()) && TestResult.uniquifierMatches(testResult, oldTestResult)) {
 					historyCount--;
 					history.add(0, oldTestResult);
 					maxTime = Math.max(maxTime, oldTestResult.getTime());
