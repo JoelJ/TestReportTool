@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * User: Joel Johnson
@@ -27,6 +28,7 @@ import java.util.List;
  * Time: 11:22 AM
  */
 public class DynamicTestResultsAction implements Action {
+	private static final Logger LOGGER = Logger.getLogger("TestReportTool");
 	private static final int SECONDS = 1000;
 
 	private final String buildId;
@@ -60,6 +62,7 @@ public class DynamicTestResultsAction implements Action {
 
 		Run run = RunUtils.findRun(buildId);
 		if(run == null) {
+			LOGGER.warning("No run for id: " + buildId);
 			throw new NullPointerException("there was no run for id: " + buildId);
 		}
 		assert run instanceof AbstractBuild : "the run should be an abstract build since that is what was passed into the constructor.";
