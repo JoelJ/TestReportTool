@@ -63,7 +63,7 @@
 					</j:forEach>
 				</table>
 
-				<h1>All Results</h1>
+				<h1>All Results (${testResults.size()})</h1>
 				<div class="allResults">
 					<a href="javascript:" class="showAll">Show All Results</a>
 				</div>
