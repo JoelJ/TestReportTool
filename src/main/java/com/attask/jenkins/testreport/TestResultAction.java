@@ -149,7 +149,7 @@ public class TestResultAction extends AbstractTestResultAction {
 
 	@Override
 	public int getTotalCount() {
-		return testResults.values().size();
+		return testResults.size();
 	}
 
 	@Override
