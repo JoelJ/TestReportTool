@@ -1,9 +1,6 @@
 package com.attask.jenkins.testreport.dynamicresults;
 
-import com.attask.jenkins.testreport.TestDataPublisher;
-import com.attask.jenkins.testreport.TestRecorder;
-import com.attask.jenkins.testreport.TestResult;
-import com.attask.jenkins.testreport.TestResultAction;
+import com.attask.jenkins.testreport.*;
 import com.attask.jenkins.testreport.utils.RunUtils;
 import hudson.FilePath;
 import hudson.matrix.MatrixBuild;
@@ -16,10 +13,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -153,5 +147,40 @@ public class DynamicTestResultsAction implements Action {
 
 	public List<TestDataPublisher> getTestDataPublishers() {
 		return testDataPublishers;
+	}
+
+	@Exported
+	public Map<String, TestResult> getTestResults() throws IOException, InterruptedException {
+		return createDelegatedAction().getTestResults();
+	}
+
+	@Exported
+	public List<TestResult> getFailures() throws IOException, InterruptedException {
+		return createDelegatedAction().getFailures();
+	}
+
+	@Exported
+	public Collection<TestResult> findAllResults() throws IOException, InterruptedException {
+		return createDelegatedAction().findAllResults();
+	}
+
+	@Exported
+	public int getFailCount() throws IOException, InterruptedException {
+		return createDelegatedAction().getFailCount();
+	}
+
+	@Exported
+	public int getTotalCount() throws IOException, InterruptedException {
+		return createDelegatedAction().getTotalCount();
+	}
+
+	@Exported
+	public int getSkipCount() throws IOException, InterruptedException {
+		return createDelegatedAction().getSkipCount();
+	}
+
+	@Exported
+	public String getUniquifier() throws IOException, InterruptedException {
+		return createDelegatedAction().getUniquifier();
 	}
 }
