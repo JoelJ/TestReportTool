@@ -331,7 +331,12 @@ public class TestResult implements Comparable<TestResult> {
 
 	@Override
 	public int compareTo(TestResult o) {
-		return this.getName().compareTo(o.getName());
+		int result = ((Integer) o.getAge()).compareTo(this.getAge()); //Highest age first
+		if(result == 0) {
+			return this.getName().compareTo(o.getName());
+		} else {
+			return result;
+		}
 	}
 
 	public static boolean uniquifierMatches(TestResult first, TestResult second) {
