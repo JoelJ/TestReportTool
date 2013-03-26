@@ -126,7 +126,11 @@ public class TestResultAction extends AbstractTestResultAction {
 	}
 
 	public Collection<TestResult> findAllResults() {
-		TreeSet<TestResult> result = new TreeSet<TestResult>();
+		TreeSet<TestResult> result = new TreeSet<TestResult>(new Comparator<TestResult>() {
+			public int compare(TestResult r1, TestResult r2) {
+				return r1.getName().compareTo(r2.getName());
+			}
+		});
 		for (Collection<TestResult> testResults : testResultByStatus.values()) {
 			result.addAll(testResults);
 		}
