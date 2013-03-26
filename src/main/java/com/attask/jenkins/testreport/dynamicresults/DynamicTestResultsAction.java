@@ -6,8 +6,8 @@ import hudson.FilePath;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
 import hudson.model.AbstractBuild;
-import hudson.model.Action;
 import hudson.model.Run;
+import hudson.tasks.test.AbstractTestResultAction;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * Date: 2/20/13
  * Time: 11:22 AM
  */
-public class DynamicTestResultsAction implements Action {
+public class DynamicTestResultsAction extends AbstractTestResultAction {
 	private static final Logger LOGGER = Logger.getLogger("TestReportTool");
 	private static final int SECONDS = 1000;
 
@@ -35,6 +35,7 @@ public class DynamicTestResultsAction implements Action {
 	private final List<TestDataPublisher> testDataPublishers;
 
 	public DynamicTestResultsAction(AbstractBuild owner, String failuresFile, String uniqueId, boolean isUnix, List<TestDataPublisher> testDataPublishers) throws IOException {
+		super(owner);
 		this.testDataPublishers = testDataPublishers;
 		this.buildId = RunUtils.getRealExternalizableId(owner);
 		this.failuresFilePattern = failuresFile;
@@ -115,6 +116,11 @@ public class DynamicTestResultsAction implements Action {
 	}
 
 	@Override
+	public Object getResult() {
+		return this;
+	}
+
+	@Override
 	public String getDisplayName() {
 		return "Running Test Report";
 	}
@@ -165,18 +171,36 @@ public class DynamicTestResultsAction implements Action {
 	}
 
 	@Exported
-	public int getFailCount() throws IOException, InterruptedException {
-		return createDelegatedAction().getFailCount();
+	public int getFailCount() {
+		try {
+			return createDelegatedAction().getFailCount();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Exported
-	public int getTotalCount() throws IOException, InterruptedException {
-		return createDelegatedAction().getTotalCount();
+	public int getTotalCount() {
+		try {
+			return createDelegatedAction().getTotalCount();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Exported
-	public int getSkipCount() throws IOException, InterruptedException {
-		return createDelegatedAction().getSkipCount();
+	public int getSkipCount() {
+		try {
+			return createDelegatedAction().getSkipCount();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Exported
