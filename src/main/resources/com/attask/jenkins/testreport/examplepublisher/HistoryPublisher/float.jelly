@@ -47,6 +47,7 @@
 			min-height: 10px;
 			bottom: 0;
 			width: ${100 / it.history.size()}%;
+			max-width: 50px;
 			vertical-align: bottom;
 			z-index: 0;
 		}
