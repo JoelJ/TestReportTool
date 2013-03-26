@@ -37,6 +37,7 @@
 			height: 100%;
 			bottom: 0;
 			width: ${100 / it.history.size()}%;
+			max-width: 12px;
 		}
 
 		#historyGraph .FINISHED {
