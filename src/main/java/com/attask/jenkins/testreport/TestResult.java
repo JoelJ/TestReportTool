@@ -339,6 +339,13 @@ public class TestResult implements Comparable<TestResult> {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "TestResult{" +
+				"name='" + name + '\'' +
+				'}';
+	}
+
 	public static boolean uniquifierMatches(TestResult first, TestResult second) {
 		if(first == null) {
 			throw new NullPointerException("first");
