@@ -341,9 +341,7 @@ public class TestResult implements Comparable<TestResult> {
 
 	@Override
 	public String toString() {
-		return "TestResult{" +
-				"name='" + name + '\'' +
-				'}';
+		return name;
 	}
 
 	public static boolean uniquifierMatches(TestResult first, TestResult second) {
