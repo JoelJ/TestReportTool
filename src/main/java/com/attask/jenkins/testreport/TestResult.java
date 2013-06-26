@@ -110,7 +110,7 @@ public class TestResult implements Comparable<TestResult> {
 		StringBuilder sb = new StringBuilder();
 		String stackTrace = this.stackTrace;
 		if ((stackTrace == null || stackTrace.trim().isEmpty()) && getStatus() != TestStatus.FINISHED) {
-			stackTrace = "This method should have run, but didn't. Check the full log for more information.";
+			stackTrace = "This test should have run, but didn't. Check the full log for more information.";
 		}
 		Scanner scanner = new Scanner(stackTrace);
 		while(scanner.hasNextLine()) {

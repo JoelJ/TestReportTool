@@ -30,6 +30,7 @@
 		<j:set var="publishers" value="${it.testDataPublishers}"/>
 		<st:include it="${build}" page="sidepanel.jelly" />
 		<l:main-panel>
+            <h1><j:if test="${it.addedSize != 0}">${it.addedSize} Not Run, </j:if>&amp;nbsp;<j:if test="${it.startedSize != 0}"> ${it.startedSize} Not Finished,</j:if><j:if test="${it.failCount != 0}"> ${it.failCount} Failed,</j:if> ${it.finishedSize} Passed</h1>
 			<div id="TestResultList">
 				<h1><img src="${it.findStatusUrl(build)}"></img> ${it.failures.size()} Failing Tests<j:if test="${it.uniquifier != null and !it.uniquifier.isEmpty()}"> for '<span class="uniquifier">${it.uniquifier}</span>'</j:if></h1>
 				<j:if test="${publishers != null and publishers.size() > 0}">

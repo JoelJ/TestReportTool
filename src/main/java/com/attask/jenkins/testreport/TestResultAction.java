@@ -142,6 +142,30 @@ public class TestResultAction extends AbstractTestResultAction {
 		return allFailures;
 	}
 
+	public int getAddedSize() {
+		if(testResultByStatus.get(TestStatus.ADDED) != null) {
+			return testResultByStatus.get(TestStatus.ADDED).size();
+		} else {
+			return 0;
+		}
+	}
+
+	public int getFinishedSize() {
+		if(testResultByStatus.get(TestStatus.FINISHED) != null) {
+			return testResultByStatus.get(TestStatus.FINISHED).size();
+		} else {
+			return 0;
+		}
+	}
+
+	public int getStartedSize() {
+		if(testResultByStatus.get(TestStatus.STARTED) != null) {
+			return testResultByStatus.get(TestStatus.STARTED).size();
+		} else {
+			return 0;
+		}
+	}
+
 	public Collection<TestResult> findAllResults() {
 		TreeSet<TestResult> result = new TreeSet<TestResult>(new Comparator<TestResult>() {
 			public int compare(TestResult r1, TestResult r2) {
@@ -161,7 +185,11 @@ public class TestResultAction extends AbstractTestResultAction {
 
 	@Override
 	public int getFailCount() {
-		return getFailures().size();
+		if(testResultByStatus.get(TestStatus.FAILED) != null) {
+			return testResultByStatus.get(TestStatus.FAILED).size();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
