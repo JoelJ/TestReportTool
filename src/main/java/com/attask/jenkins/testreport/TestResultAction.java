@@ -93,7 +93,8 @@ public class TestResultAction extends AbstractTestResultAction {
 		String name = request.getParameter("name");
 		TestResult testResult = testResults.get(name);
 		ServletOutputStream outputStream = response.getOutputStream();
-		outputStream.print(testResult.htmlifyStackTrace());
+		String stackTrace = testResult.htmlifyStackTrace();
+		outputStream.print(stackTrace);
 		outputStream.flush();
 	}
 
@@ -121,8 +122,24 @@ public class TestResultAction extends AbstractTestResultAction {
 
 	@Exported
 	public List<TestResult> getFailures() {
+		List<TestResult> allFailures = new ArrayList<TestResult>();
+
 		List<TestResult> failures = testResultByStatus.get(TestStatus.FAILED);
-		return failures == null ? Collections.<TestResult>emptyList() : failures;
+		if(failures != null) {
+			allFailures.addAll(failures);
+		}
+
+		List<TestResult> addedTests = testResultByStatus.get(TestStatus.ADDED);
+		if (addedTests != null) {
+			allFailures.addAll(addedTests);
+		}
+
+		List<TestResult> startedTests = testResultByStatus.get(TestStatus.STARTED);
+		if (startedTests != null) {
+			allFailures.addAll(startedTests);
+		}
+
+		return allFailures;
 	}
 
 	public Collection<TestResult> findAllResults() {

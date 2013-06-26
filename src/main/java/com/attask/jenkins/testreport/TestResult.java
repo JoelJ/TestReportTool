@@ -108,6 +108,10 @@ public class TestResult implements Comparable<TestResult> {
 		Pattern pattern = Pattern.compile("((:?[\\$a-zA-Z0-9_]+\\.)+(:?[\\$a-zA-Z0-9_]+))\\((:?([\\$a-zA-Z0-9_]+)\\.[\\$a-zA-Z0-9_]+:(\\d+)|Unknown Source|Native Method)\\)");
 
 		StringBuilder sb = new StringBuilder();
+		String stackTrace = this.stackTrace;
+		if ((stackTrace == null || stackTrace.trim().isEmpty()) && getStatus() != TestStatus.FINISHED) {
+			stackTrace = "This method should have run, but didn't. Check the full log for more information.";
+		}
 		Scanner scanner = new Scanner(stackTrace);
 		while(scanner.hasNextLine()) {
 			String line = Util.escape(scanner.nextLine());
@@ -329,7 +333,7 @@ public class TestResult implements Comparable<TestResult> {
 		return other != null && other instanceof TestResult && this.getName().equals(((TestResult) other).getName());
 	}
 
-	@Override
+//	@Override
 	public int compareTo(TestResult o) {
 		int result = ((Integer) o.getAge()).compareTo(this.getAge()); //Highest age first
 		if(result == 0) {
