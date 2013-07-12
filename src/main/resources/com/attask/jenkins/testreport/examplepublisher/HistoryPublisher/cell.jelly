@@ -37,7 +37,7 @@
 			height: 100%;
 			bottom: 0;
 			width: ${100 / it.history.size()}%;
-			max-width: 12px;
+			max-width: ${100 / it.getMaxHistorySize()}%;
 		}
 
 		#historyGraph .FINISHED {
@@ -65,6 +65,7 @@
 			background: -ms-linear-gradient(top, #ff817c 0%,#d83a3a 100%);
 			background: linear-gradient(to bottom, #ff817c 0%,#d83a3a 100%);
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff817c', endColorstr='#d83a3a',GradientType=0 );
+
 		}
 
 		#historyGraph a:hover {
