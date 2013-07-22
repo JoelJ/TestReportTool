@@ -24,6 +24,7 @@ import java.util.List;
 public class HistoryPublisher extends TestDataPublisher {
 	private static final boolean INCLUDE_FUTURE_BUILDS = true;
 	private static final boolean ONLY_PREVIOUS_BUILDS = false;
+    private static final int MAX_HISTORY_SIZE = 5;
 
 	public List<TestResult> history;
 	public int maxTime;
@@ -140,6 +141,10 @@ public class HistoryPublisher extends TestDataPublisher {
 		}
 		this.currentIndex = indexOf;
 	}
+
+    public int getMaxHistorySize() {
+        return MAX_HISTORY_SIZE;
+    }
 
 	@Extension
 	public static class DescriptorImpl extends Descriptor<TestDataPublisher> {
