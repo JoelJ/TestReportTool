@@ -186,18 +186,20 @@ public class TestResultAction extends AbstractTestResultAction {
 	@Override
 	public int getFailCount() {
 		if(testResultByStatus.get(TestStatus.FAILED) != null) {
-			return testResultByStatus.get(TestStatus.FAILED).size();
+			return getTotalCount() - getSkipCount() - testResultByStatus.get(TestStatus.FINISHED).size();
 		} else {
 			return 0;
 		}
 	}
 
 	@Override
+	@Exported
 	public int getTotalCount() {
 		return testResults.size();
 	}
 
 	@Override
+	@Exported
 	public int getSkipCount() {
 		List<TestResult> skipped = testResultByStatus.get(TestStatus.SKIPPED);
 		return skipped == null ? 0 :skipped.size();
