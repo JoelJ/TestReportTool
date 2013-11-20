@@ -205,7 +205,6 @@ public class TestResultAction extends AbstractTestResultAction {
 		return skipped == null ? 0 :skipped.size();
 	}
 	
-	@Override
 	@Exported
 	public int getFinishedCount() {
 		List<TestResult> skipped = testResultByStatus.get(TestStatus.FINISHED);
