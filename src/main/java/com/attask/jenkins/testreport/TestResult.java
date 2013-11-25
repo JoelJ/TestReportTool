@@ -31,6 +31,7 @@ public class TestResult implements Comparable<TestResult> {
 	private final String firstFailingBuildId;
 	private final String url;
 	private final String uniquifier;
+	private String style;
 
 	public TestResult(String name, int time, String threadId, TestStatus status, String runId, String stackTrace, int age, String firstFailingBuildId, String url, String uniquifier) {
 		this.name = name;
@@ -142,6 +143,10 @@ public class TestResult implements Comparable<TestResult> {
 		return url;
 	}
 
+	public String getStyle() {
+		return style;
+	}
+
 	@SuppressWarnings("UnusedDeclaration")
 	public String findFirstFailureUrl() {
 		String firstFailingBuildId = getFirstFailingBuildId();
@@ -168,7 +173,7 @@ public class TestResult implements Comparable<TestResult> {
 		return run.getUrl();
 	}
 
-	public static Collection<TestResult> parse(FilePath file, Run build, String uniqueId, String url) throws IOException, IllegalFormatException {
+	public static Collection<TestResult> parse(TestRecorder testRecorder, FilePath file, Run build, String uniqueId, String url) throws IOException, IllegalFormatException {
 		Map<TestResult, TestStatus> results = new HashMap<TestResult, TestStatus>();
 
 		List<String> fileLines = Arrays.asList(file.readToString().split("\r?\n"));
@@ -230,6 +235,9 @@ public class TestResult implements Comparable<TestResult> {
 					break;
 				default:
 					throw new IllegalFailureFileFormatException(file, lineNumber, "Status not implemented: " + testStatus);
+			}
+			if (testRecorder != null) {
+				testRecorder.setIsCritical(result);
 			}
 
 			TestStatus oldStatus = results.get(result);
@@ -361,6 +369,10 @@ public class TestResult implements Comparable<TestResult> {
 		}
 
 		return first.getUniquifier().equals(second.getUniquifier());
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
 	}
 
 	private static class AgeStat {

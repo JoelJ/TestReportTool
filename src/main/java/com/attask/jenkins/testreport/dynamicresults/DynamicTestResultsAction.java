@@ -99,7 +99,7 @@ public class DynamicTestResultsAction extends AbstractTestResultAction {
 			String[] files = workspace.act(new TestRecorder.WorkspaceIteratorCallable(failuresFilePattern, unix));
 			for (String file : files) {
 				FilePath resultFile = new FilePath(workspace, file);
-				Collection<TestResult> parsed = TestResult.parse(resultFile, run, uniqueId, getUrlName());
+				Collection<TestResult> parsed = TestResult.parse(null, resultFile, run, uniqueId, getUrlName());
 				result.addAll(parsed);
 			}
 		}

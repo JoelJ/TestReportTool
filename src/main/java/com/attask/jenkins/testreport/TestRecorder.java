@@ -15,7 +15,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.DescribableList;
-import net.sf.json.JSONObject;
+import net.sf.json.*;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.*;
 
 /**
  * User: Joel Johnson
@@ -37,12 +38,18 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 	private static final Logger log = Logger.getLogger(TestRecorder.class.getCanonicalName());
 	private final String resultsFilePattern;
 	private final String uniquifier;
+	private final List<HighlightStyle> highlightStyle;
 	private transient final String url = "testReport";
 	private final DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers;
 
 	@DataBoundConstructor
-	public TestRecorder(String resultsFilePattern, String uniquifier, DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers) {
+	public TestRecorder(List<HighlightStyle> highlightStyle, String resultsFilePattern, String uniquifier, DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers) {
 		//This constructor isn't automatically bound. It's manually bound in the DescriptorImpl class
+		if (highlightStyle == null) {
+			this.highlightStyle = Collections.emptyList();
+		} else {
+			this.highlightStyle = Collections.unmodifiableList(new ArrayList<HighlightStyle>(highlightStyle));
+		}
 		this.resultsFilePattern = resultsFilePattern;
 		this.uniquifier = uniquifier;
 		this.testDataPublishers = testDataPublishers;
@@ -63,7 +70,7 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 		LinkedList<TestResult> results = new LinkedList<TestResult>();
 		for (String includedFile : includedFiles) {
 			listener.getLogger().println("Parsing: " + includedFile);
-			Collection<TestResult> testResults = TestResult.parse(new FilePath(workspace, includedFile), build, expandedUniquifier, url);
+			Collection<TestResult> testResults = TestResult.parse(this, new FilePath(workspace, includedFile), build, expandedUniquifier, url);
 			listener.getLogger().println("\t - contained " + testResults.size() + " results.");
 			results.addAll(testResults);
 		}
@@ -90,7 +97,7 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 	/**
 	 * Called by Jenkins. Used to aggregate Matrix results into one result.
 	 */
-	@Override
+	//@Override
 	public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
 		List<TestDataPublisher> testDataPublisherList = Collections.emptyList();
 		if(testDataPublishers != null) {
@@ -129,8 +136,27 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 	}
 
 	@Exported
+	public List<HighlightStyle> getHighlightStyle() {
+		return highlightStyle;
+	}
+
+	@Exported
 	public DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> getTestDataPublishers() {
 		return testDataPublishers;
+	}
+
+	public void setIsCritical(TestResult result) {
+		for (HighlightStyle style : highlightStyle) {
+			String stackTrace = result.getStackTrace();
+			if (stackTrace != null) {
+				if (style.getPattern() != null && style.getPattern().matcher(stackTrace).find()) {
+					result.setStyle("background-color: " + style.getColor());
+					System.out.println("Setting background color to " + style.getColor() + " for " + result.getName());
+				} else {
+					System.out.println("Didn't match" + result.getName());
+				}
+			}
+		}
 	}
 
 	@Extension
@@ -159,8 +185,29 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 			} catch (IOException e) {
 				throw new FormException(e,null);
 			}
+			List<HighlightStyle> highlightStyles = new ArrayList<HighlightStyle>();
+			if (formData.containsKey("highlightStyle")) {
+				try {
+					JSONObject highlightObject = formData.getJSONObject("highlightStyle");
+					String color = highlightObject.getString("color");
+					if(!color.startsWith("#") && (color.length() == 6 || color.length() == 3)) {
+						color = "#" + color;
+					}
+					highlightStyles.add(new HighlightStyle(highlightObject.getString("regex"), color));
+				} catch (net.sf.json.JSONException e) { // They specified more than one highlight style
+					JSONArray highlightArray = formData.getJSONArray("highlightStyle");
+					for (Object o : highlightArray) {
+						JSONObject highlightObject = (JSONObject) o;
+						String color = highlightObject.getString("color");
+						if(!color.startsWith("#") && (color.length() == 6 || color.length() == 3)) {
+							color = "#" + color;
+						}
+						highlightStyles.add(new HighlightStyle(highlightObject.getString("regex"), color));
+					}
+				}
+			}
 
-			return new TestRecorder(resultsFilePattern, uniquifier, testDataPublishers);
+			return new TestRecorder(highlightStyles, resultsFilePattern, uniquifier, testDataPublishers);
 		}
 
 	}

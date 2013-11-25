@@ -8,6 +8,9 @@
 	<f:entry title="Uniquifier" field="uniquifier">
 		<f:textbox />
 	</f:entry>
+	<f:entry title="Highlight Styles">
+		<f:repeatableProperty field="highlightStyle" />
+	</f:entry>
 
 	<!--Copied from Junit Plugin-->
 	<j:invokeStatic var="testDataPublisherDescriptors"

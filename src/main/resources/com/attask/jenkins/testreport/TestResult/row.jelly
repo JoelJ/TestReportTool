@@ -1,6 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
 		 xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<tr>
+	<tr style="${it.getStyle()}">
 		<td class="pane name">
 			<span href="getStackTrace?name=${it.nameUrlEncoded}" class="showStackTrace">&gt;&gt;&gt;</span>
 			<a href="test?name=${it.nameUrlEncoded}">${test.name}</a>

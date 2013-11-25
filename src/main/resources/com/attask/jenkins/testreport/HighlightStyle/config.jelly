@@ -1,0 +1,14 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+		 xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry>
+		<f:entry field="color" title="Color">
+			<f:textbox />
+		</f:entry>
+		<f:entry field="regex" title="Regex">
+			<f:textbox />
+		</f:entry>
+		<f:entry>
+			<f:repeatableDeleteButton />
+		</f:entry>
+	</f:entry>
+</j:jelly>
