@@ -151,9 +151,6 @@ public class TestRecorder extends Recorder implements MatrixAggregatable {
 			if (stackTrace != null) {
 				if (style.getPattern() != null && style.getPattern().matcher(stackTrace).find()) {
 					result.setStyle("background-color: " + style.getColor());
-					System.out.println("Setting background color to " + style.getColor() + " for " + result.getName());
-				} else {
-					System.out.println("Didn't match" + result.getName());
 				}
 			}
 		}
