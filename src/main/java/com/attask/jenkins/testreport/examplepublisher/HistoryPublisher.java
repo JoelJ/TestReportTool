@@ -27,7 +27,7 @@ public class HistoryPublisher extends TestDataPublisher {
     private static final int MAX_HISTORY_SIZE = 5;
 
 	public List<TestResult> history;
-	public int maxTime;
+	public long maxTime;
 	public int currentIndex;
 
 	@DataBoundConstructor
@@ -86,7 +86,7 @@ public class HistoryPublisher extends TestDataPublisher {
 
 	private void populateHistory(AbstractBuild<?, ?> build, TestResult testResult, int maxHistoryCount, boolean tryForward) {
 		List<TestResult> history = new ArrayList<TestResult>(maxHistoryCount);
-		int maxTime = Integer.MIN_VALUE;
+		long maxTime = Long.MIN_VALUE;
 
 		int historyCount = maxHistoryCount;
 
