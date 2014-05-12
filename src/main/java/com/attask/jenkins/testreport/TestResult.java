@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class TestResult implements Comparable<TestResult> {
 	public static final Logger log = Logger.getLogger("TestReportTool");
 	private final String name;
-	private final int time;
+	private final long time;
 	private final String threadId;
 	private final TestStatus status;
 	private final String runId;
@@ -33,7 +33,7 @@ public class TestResult implements Comparable<TestResult> {
 	private final String uniquifier;
 	private String style;
 
-	public TestResult(String name, int time, String threadId, TestStatus status, String runId, String stackTrace, int age, String firstFailingBuildId, String url, String uniquifier) {
+	public TestResult(String name, long time, String threadId, TestStatus status, String runId, String stackTrace, int age, String firstFailingBuildId, String url, String uniquifier) {
 		this.name = name;
 		this.time = time;
 		this.threadId = threadId;
@@ -57,7 +57,7 @@ public class TestResult implements Comparable<TestResult> {
 	}
 
 	@Exported
-	public int getTime() {
+	public long getTime() {
 		return time;
 	}
 
@@ -220,12 +220,21 @@ public class TestResult implements Comparable<TestResult> {
 					} else {
 						throw new IllegalFailureFileFormatException(file, lineNumber, "Missing Thread ID");
 					}
-					int runTime;
+					long runTime;
 					if (tokenizedLine.length > 2) {
-						runTime = Integer.parseInt(tokenizedLine[2]);
-					} else {
-						throw new IllegalFailureFileFormatException(file, lineNumber, "Missing Runtime");
+						try {
+							runTime = Long.parseLong(tokenizedLine[2]);
+						}
+						catch (NumberFormatException e) {
+							runTime = -1;
+							log.warning("Error parsing " + tokenizedLine[2] + " as long");
+						}
 					}
+					else {
+						runTime = -1;
+						log.warning("No runtime in file: " + file.getRemote());
+					}
+
 					AgeStat ageStat = findAge(name, build, uniqueId);
 					StringBuilder stackTrace = new StringBuilder();
 					int linesToAdvance = readStackTrace(fileLines, lineNumber, stackTrace);
